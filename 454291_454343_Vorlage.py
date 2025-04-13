@@ -3,13 +3,9 @@
 
 ### Vorlagendatei für die Übungen zur Computergestützten Physik ###
 
-# Bitte ergänzen Sie hier die Daten der Abgebenden. Ersetzen Sie nur
-# die Punkte ('...'), aber lassen Sie den Rest der Zeilen und ihre Reihenfolge
-# ansonsten unverändert, da Ihre Abgabe sonst nicht elektronisch verarbeitet
-# werden kann.
 #
 # 1)
-# Matrikelnummer: 454505
+# Matrikelnummer: 454291
 # Name: Julia Els
 # Email: julia.els@rwth-aachen.de
 #
