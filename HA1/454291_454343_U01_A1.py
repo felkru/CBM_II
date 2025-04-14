@@ -37,7 +37,7 @@ plt.show()
 mu = np.mean(a)
 print(f'Der Mittelwert der Stichprobe ist {mu}')
 # statistical uncertainty of the median
-sigma = np.std(a)
+sigma = np.std(a, ddof=1)
 std_mean = sigma / np.sqrt(len(a))
 print(f'Der Stichprobenmittelwert hat einen statistischen Fehler von {std_mean}')
 
@@ -53,6 +53,8 @@ plt.xlabel('X')
 plt.ylabel('Wahrscheinlichkeit für x')
 plt.plot(x, gauss)
 plt.show()
+
+
 
 # 1 d)
 cdfAt3p5 = stats.norm.pdf(3.5, mu, sigma)
@@ -76,7 +78,7 @@ plt.show()
 
 # print sample median and stat. error
 mean = np.mean(sample)
-stat_error = np.std(sample)/np.sqrt(len(sample))
+stat_error = np.std(sample, ddof=1)/np.sqrt(len(sample))
 print(f'Der Mittelwert der Stichprobe ist {mean}±{stat_error}')
 
 # 2 c)
@@ -88,7 +90,7 @@ errors = []
 for k in x:
     sample = np.random.exponential(tau, size=k)
     means.append(np.mean(sample))
-    stds.append(np.std(sample))
+    stds.append(np.std(sample, ddof=1))
     errors.append(np.std(sample)/np.sqrt(len(sample)))
 
 plt.title('2c) Stichprobenmittelwert in Abhängigkeit von Stichprobengröße')
@@ -114,17 +116,38 @@ plt.show()
 n, m = 1, 1000
 mu, sigma = 5, 0.8
 
-cs = []
-for _ in range(m):
-    ai = np.random.normal(mu, sigma, n)
-    cs.append(np.sum(((ai - mu)/sigma)**2))
-
-print('Aufgabe 3a):', cs)
+ai = np.random.normal(mu, sigma, size=(m, n))
+cs = np.sum(((ai - mu)/sigma)**2, axis=1)
 
 # 3 b)
-
-plt.title('Chi-Quadrat-Verteilung')
+plt.title("Chi-Quadrat verteilte cj's mit N=1")
 plt.xlabel('X')
 plt.ylabel('Anzahl')
-plt.hist(cs, bins=20)
+plt.hist(cs, density=True, bins=30)
+
+# 3 c)
+x = np.linspace(0, max(cs), 100)
+y = stats.chi2.pdf(x, n)
+plt.plot(x, y)
+plt.xlim(left=0)
+plt.ylim(bottom=0)
 plt.show()
+
+# 3 d)
+for n in [2,4,8]:
+    ai = np.random.normal(mu, sigma, size=(m, n))
+    cs = np.sum(((ai - mu) / sigma) ** 2, axis=1)
+
+    # set up plot, plot hist of c's
+    plt.title(f"Chi-Quadrat verteilte cj's mit N={n}")
+    plt.xlabel('X')
+    plt.ylabel('Anzahl')
+    plt.hist(cs, density=True, bins=30)
+
+    # theoretical chi2 distribution
+    x = np.linspace(0, max(cs), 100)
+    y = stats.chi2.pdf(x, n)
+    plt.plot(x, y)
+    plt.xlim(left=0)
+    plt.ylim(bottom=0)
+    plt.show()
