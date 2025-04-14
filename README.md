@@ -2,7 +2,7 @@
 
 ## Getting started
 ```bash
-where python
+which python
 ```
 If this doesn't say something like 
 `/Users/felix-krueckel/default_venv/bin/python
@@ -12,6 +12,7 @@ If this doesn't say something like
 ```bash
 source .venv/bin/activate
 ```
+If this fails run `python -m venv .venv`.
 ```bash
 pip install -r requirements.txt
 ```
