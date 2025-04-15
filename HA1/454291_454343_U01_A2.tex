@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+
+\title{CP\_II}
+\author{Julia Els, 454291 - Felix Krueckel, 454343}
+\date{13. April 2025}
+
+\begin{document}
+
+\maketitle
+
+\section*{Blatt 1}
+\subsection*{Aufgabe 2a)}
+\includegraphics[width=1\linewidth]{image.png}
+
+Die statistische Fehler des Mittelwerts einer Stichprobe im Vergleich zur Ursprungsverteilung berechnet sich durch \( \frac{\overline{\sigma}}{\sqrt{n}} \).
+
+\subsubsection*{Berechnung der Standardabweichung}
+Die Standardabweichung einer Stichprobe berechnet sich nach der Formel: \( \overline{\sigma} = \sqrt{\frac{\sum{(x_i - \overline{x})^2}}{n-1}} \). Entsprechend ergibt sich für die Stichprobe \( [90, 120] \) mit \( n = 2 \) eine Standardabweichung von: 
+
+\[ \overline{\sigma} = \sqrt{\frac{(90-105)^2 + (120-105)^2}{2-1}} = \sqrt{\frac{2 \times 15^2}{1}} = \sqrt{2} \times 15 \]
+
+\subsubsection*{Berechnung des Ergebnis}
+Mit der Standardabweichung können wir nun das Ergebnis durch:
+
+\[ \text{stat. Fehler des Mittelwerts} = \frac{\overline{\sigma}}{\sqrt{n}} = \frac{\sqrt{2} \times 15}{\sqrt{2}} = 15 \]
+
+\end{document}
