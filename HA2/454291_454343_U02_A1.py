@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+from itertools import count
 
 ### Vorlagendatei für die Übungen zur Computergestützten Physik ###
 
@@ -17,47 +18,48 @@
 
 # Häufig benötigte Module (auskommentieren, wenn notwendig):
 import numpy as np
+import scipy.stats
 import scipy.stats as stats
 #import sympy as sp
 import matplotlib.pyplot as plt
+from numpy.random import multivariate_normal
 
-a = np.loadtxt("Messwerte.csv")
+rho=0.6
+mean=[1,2] # [mu_x, mu_y]
+sigmax=1
+sigmay=1
+cov=[[1,0.6],[0.6,1]]
+n = 1000
+x = np.random.multivariate_normal(mean, cov, size=(1000,))
 
-# Task 1
-# 1 a)
-bins = 20
-plt.title('1a) Histogramm der Messwerte')
-plt.hist(a, bins=bins)
-plt.xlabel("X")
-plt.ylabel("Anzahl")
+plt.title('Scatterplot')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.scatter(x[:, 0], x[:, 1], s=1)
 plt.show()
 
-# 1 b)
-# median
-mu = np.mean(a)
-print(f'Der Mittelwert der Stichprobe ist {mu}')
-# statistical uncertainty of the median
-sigma = np.std(a, ddof=1)
-std_mean = sigma / np.sqrt(len(a))
-print(f'Der Stichprobenmittelwert hat einen statistischen Fehler von {std_mean}')
+#Stichprobenvarianzen von x und y
+sigmasx=np.std(x[:,0], ddof=1)
+sigmasy=np.std(x[:,1], ddof=1)
+print(f'Die Stichprobenvarianzen von x und y sind {sigmasx} und {sigmasy}')
 
-# 1 c)
-# the standard deviation was already calculated for the statistical uncertainty of the median
-print(f'Man sollte als Parameter der Gaussfunktion das Stichproben-mu und -sigma wählen.')
-print(f'Die Standardabweichung der Stichprobe ist {sigma}')
+#Korrelationskoeffizient der erzeugten Datenpunkte
+sigmasxy=1/(n-1)*np.sum((x[:,0]-x[:,0].mean())*(x[:,1]-x[:, 1].mean()))
+corrs=sigmasxy/np.sqrt(sigmasx**2*sigmasy**2)
+print(f'Der Korrelationskoeffizient der erzeugten Datenpunkte ist {sigmasxy}')
 
-x = np.linspace(mu - 3*sigma, mu + 3*sigma, 100)
-gauss = stats.norm.pdf(x, mu, sigma)
-# plot gaussian
-plt.title('1c) Normalverteilung vs Histogramm')
-plt.xlabel('X')
-plt.ylabel('Wahrscheinlichkeit für x')
-plt.hist(a, bins=bins, density=True)
-plt.plot(x, gauss)
-plt.show()
+#Anteil der Ereignisse mit (x>2) und (y>3)
+j=0
+for i in range (0,n):
+    if x[i,0]>2 and x[i,1]>3:
+        j+=1
+anteil=j/n
+print(f'Der Anteil der Ereignisse mit (x>2) und (y>3) ist {anteil}')
 
-# 1 d)
-cdfAt3p5 = stats.norm.pdf(3.5, mu, sigma)
-bigger3p5freq = len([v for v in a if v > 3.5])/len(a)
-print(f'Stimmt das Modell, dass die Messwerte mit mu und sigma normalverteilt sind, sollten {1-cdfAt3p5}% der Werte über 3,5 liegen.')
-print(f'In unserere Stichprobe liegen {bigger3p5freq}% der Werte über 3,5.')
+#Wahrscheinlichkeit für (x>2) und (y>3) analytisch
+m = scipy.stats.multivariate_normal(mean, cov)
+#scipy.stats.multivariate_normal.cdf()
+lowlimit=np.array([2,3])
+uplimit=np.array([np.inf, np.inf])
+p = m.cdf(uplimit, lower_limit=lowlimit)
+print(f'Wahrscheinlichkeit für (x>2) und (y>3) analytisch berechnet ist {p}')
