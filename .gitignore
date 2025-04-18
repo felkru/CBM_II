@@ -1,2 +1,35 @@
-*.pdf
 experiments.ipynb
+
+# Ignore lecture slides
+Wiederholung/
+
+# Ignore LaTeX build files
+*.aux
+*.log
+*.lof
+*.lot
+*.toc
+*.out
+*.nav
+*.snm
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.dvi
+*.ps
+*.bbl
+*.blg
+*.idx
+*.ind
+*.ilg
+
+# Ignore build output directory
+build/
+*/out/
+
+# Ignore PyCharm specific files
+.idea/
+
+# Ignore Python virtual environments if you have one
+.venv/
+venv/
