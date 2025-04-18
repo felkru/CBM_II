@@ -43,14 +43,14 @@ def linear_model(xwerte, b, c):
     return b * xwerte + c
 
 popt, pcov = curve_fit(linear_model, xwerte, ywerte)
-#print(f'a ist {popt[0]}, b ist {popt[1]}')
+#print(f'a ist {params[0]}, b ist {params[1]}')
 
-result_pars, result_cov = np.polyfit(xwerte, ywerte, 1, cov=True)
-print(f'Das Ergebnis für a ist {result_pars[0]} plus minus {np.sqrt(result_cov[0,0])} und für b {result_pars[1]} plus minus {result_cov[1,1]}')
+pars, cov = np.polyfit(xwerte, ywerte, 1, cov=True)
+print(f'Das Ergebnis für a ist {pars[0]} plus minus {np.sqrt(cov[0,0])} und für b {pars[1]} plus minus {cov[1,1]}')
 
 #3c)
-corrcoef = result_cov[0,1]/np.sqrt(result_cov[0,0]*result_cov[1,1])
-print(f'Ja, die Werte sind korreliert, da die Kovarianz nicht 0 ist sondern {result_cov[0,1]}. Der Korrelationskoeffizient ist {corrcoef}')
+corrcoef = cov[0,1] / np.sqrt(cov[0,0] * cov[1,1])
+print(f'Ja, die Werte sind korreliert, da die Kovarianz nicht 0 ist sondern {cov[0,1]}. Der Korrelationskoeffizient ist {corrcoef}')
 
 #3d)
 plt.plot(xwerte, ywerte, label='Daten')
@@ -68,7 +68,7 @@ xgerade = np.linspace(900, 910, 10)
 def func2(xgerade, d, e):
     return d * xgerade + e
 
-# fit_stderror2= np.sqrt(xgerade**2*np.sqrt(pcov[0,0])*np.sqrt(pcov[1,1]))
+# fit_stderror2= np.sqrt(xgerade**2*np.sqrt(cov[0,0])*np.sqrt(cov[1,1]))
 fit_stderror = pcov[0,0] * xgerade**2 + pcov[1,1] * 1 + 2 * xgerade * pcov[0,1]
 plt.plot(xgerade, func2(xgerade, popt[0]+fit_stderror,popt[1]))
 plt.plot(xgerade, func2(xgerade, popt[0]-fit_stderror,popt[1]))
