@@ -49,9 +49,9 @@ ax1.grid(True, linestyle=':')
 # --- Task 3b: Linear Fit using curve_fit ---
 print("\n--- Aufgabe 3b ---")
 
-# Define the linear model function (using a=slope, b=intercept)
+# Define the linear model function (using data=slope, b=intercept)
 def linear_model(x, a, b):
-    """Linear model y = a*x + b"""
+    """Linear model y = data*x + b"""
     return a * x + b
 
 # Perform the fit using curve_fit (minimizes chi-squared)
@@ -67,33 +67,32 @@ stderr_a = np.sqrt(cov[0, 0])
 stderr_b = np.sqrt(cov[1, 1])
 
 print(f"Fit-Parameter (curve_fit):")
-print(f"  Steigung a = {a_fit:.5f} ± {stderr_a:.5f}")
+print(f"  Steigung data = {a_fit:.5f} ± {stderr_a:.5f}")
 print(f"  Achsenabschnitt b = {b_fit:.3f} ± {stderr_b:.3f}")
 
 # Compare with polyfit (optional, just for verification)
 # result_pars_poly, result_cov_poly = np.polyfit(x_data, y_data, 1, cov=True)
 # print("\nFit-Parameter (polyfit):")
-# print(f"  Steigung a = {result_pars_poly[0]:.5f} ± {np.sqrt(result_cov_poly[0,0]):.5f}")
+# print(f"  Steigung data = {result_pars_poly[0]:.5f} ± {np.sqrt(result_cov_poly[0,0]):.5f}")
 # print(f"  Achsenabschnitt b = {result_pars_poly[1]:.3f} ± {np.sqrt(result_cov_poly[1,1]):.3f}")
-
 
 # --- Task 3c: Check for Correlation ---
 print("\n--- Aufgabe 3c ---")
-# Get the covariance between a and b
+# Get the covariance between data and b
 cov_ab = cov[0, 1]
 # Calculate the correlation coefficient
 correlation_ab = cov_ab / (stderr_a * stderr_b)
 
-print(f"Kovarianz zwischen a und b: {cov_ab:.5f}")
-print(f"Korrelationskoeffizient zwischen a und b: {correlation_ab:.5f}")
+print(f"Kovarianz zwischen data und b: {cov_ab:.5f}")
+print(f"Korrelationskoeffizient zwischen data und b: {correlation_ab:.5f}")
 if abs(correlation_ab) > 1e-6:
-    print("Die Parameter a und b sind korreliert (Korrelationskoeffizient != 0).")
+    print("Die Parameter data und b sind korreliert (Korrelationskoeffizient != 0).")
 else:
-    print("Die Parameter a und b sind (nahezu) unkorreliert.")
+    print("Die Parameter data und b sind (nahezu) unkorreliert.")
 
 # --- Task 3d: Plot Fitted Line ---
 print("\n--- Aufgabe 3d ---")
-# Generate points for a smooth line plot
+# Generate points for data smooth line plot
 x_fit_line = np.linspace(x_data.min(), x_data.max(), 200)
 y_fit_line = linear_model(x_fit_line, a_fit, b_fit)
 
@@ -104,7 +103,7 @@ print("Angepasste Gerade wurde zum Plot hinzugefügt.")
 # --- Task 3e: Plot Uncertainty Band ---
 print("\n--- Aufgabe 3e ---")
 # Calculate the standard deviation of the predicted y_fit values
-var_y_fit = cov[0, 0] * x_fit_line ** 2 + cov[1, 1] + 2 * x_fit_line * cov[0, 1] # Var(y_fit) = Var(a*x + b) = x^2*Var(a) + Var(b) + 2*x*Cov(a, b)
+var_y_fit = cov[0, 0] * x_fit_line ** 2 + cov[1, 1] + 2 * x_fit_line * cov[0, 1] # Var(y_fit) = Var(data*x + b) = x^2*Var(data) + Var(b) + 2*x*Cov(data, b)
 sigma_y_fit = np.sqrt(var_y_fit)
 
 # Plot the 1-sigma uncertainty band
@@ -139,7 +138,7 @@ print("\n--- Aufgabe 3g ---")
 
 
 def perform_chi2_test(x, y, model_func, params, sigma_y):
-    """Performs a chi-squared test for goodness of fit."""
+    """Performs data chi-squared test for goodness of fit."""
     y_model = model_func(x, *params)
     residuals = y - y_model
     chi2_value = np.sum((residuals / sigma_y) ** 2)

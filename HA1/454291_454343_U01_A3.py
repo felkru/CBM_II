@@ -22,7 +22,7 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 
 # Task 3
-# 3 a)
+# 3 data)
 n, m = 1, 1000
 mu, sigma = 5, 0.8
 

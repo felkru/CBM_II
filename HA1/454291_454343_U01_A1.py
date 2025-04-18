@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 a = np.loadtxt("Messwerte.csv")
 
 # Task 1
-# 1 a)
+# 1 data)
 bins = 20
 plt.title('1a) Histogramm der Messwerte')
 plt.hist(a, bins=bins)

@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 # Task 2
 tau = 100 # value in seconds
 
-# Please find A2 a) in the attached .pdf and .tex files.
+# Please find A2 data) in the attached .pdf and .tex files.
 
 # 2 b)
 n = 1000 # you can choose the size of the sample here
