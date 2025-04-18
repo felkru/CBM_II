@@ -30,7 +30,7 @@ sigmax=1
 sigmay=1
 cov=[[1,0.6],[0.6,1]]
 n = 1000
-x = np.random.multivariate_normal(mean, cov, size=(1000,))
+x = np.random.multivariate_normal(mean, cov, size=(n,))
 
 plt.title('Scatterplot')
 plt.xlabel('x')
@@ -58,7 +58,6 @@ print(f'Der Anteil der Ereignisse mit (x>2) und (y>3) ist {anteil}')
 
 #Wahrscheinlichkeit für (x>2) und (y>3) analytisch
 m = scipy.stats.multivariate_normal(mean, cov)
-#scipy.stats.multivariate_normal.cdf()
 lowlimit=np.array([2,3])
 uplimit=np.array([np.inf, np.inf])
 p = m.cdf(uplimit, lower_limit=lowlimit)

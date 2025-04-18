@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{siunitx}
+
+\sisetup{
+    locale=DE,
+    group-separator = {.},
+    group-digits=integer,
+}
+
+\title{CP\_II - Blatt 2}
+\author{Julia Els, 454291 - Felix Krueckel, 454343}
+\date{16. April 2025}
+
+\begin{document}
+
+    \maketitle
+
+    \section*{Aufgabe 1)}
+    \subsection*{a)}
+
+    Die Aktivität berechnet sich aus \( \epsilon = 0.1 \) und \( N = 2356 \) zu: \[ A = \frac{N}{\epsilon \cdot t} = \frac{2356}{0.1 \cdot 60s} \approx 392,67 \ Bq\]
+
+    Der Fehler errechnet sich durch die gaussche  Fehlerfortpflanzungsformel: \[ \sigma_{ges} = \sqrt{\left( \frac{d Y}{d X_1} \sigma_{X_1} \right)^2 + \left( \frac{d Y}{d X_2} \sigma_{X_2} \right)^2} = \sqrt{\left( \frac{d A}{d \epsilon} \sigma_\epsilon \right)^2 + \left( \frac{d A}{d N} \sigma_N \right)^2} \]
+
+    Es fehlen zur Berechnung noch die beiden Ableitungen, \( \sigma_\epsilon \) und \( \sigma_N \):
+
+    \begin{itemize}
+        \item \( \frac{d A}{d \epsilon} = \frac{d \frac{N}{\epsilon \cdot t}}{d \epsilon} = -\frac{N}{\epsilon^2 \cdot t}\)
+        \item \( \frac{d A}{d N} = \frac{d \frac{N}{\epsilon \cdot t}}{d N} = \frac{1}{\epsilon \cdot t} \)
+        \item \( \sigma_N \) ergibt sich aus der Varianz der Poissonverteilung als \( \sigma_N = \sqrt{\lambda} \allowbreak = \sqrt{E[P(r)]} \allowbreak \). Die beste Annäherung die uns für den Erwartungswert unseres Experiments zur Verfügung steht ist \( N \) und entsprechend ergibt sich: \( \sigma_N = \sqrt{N} \) \\
+        \item Geht man davon aus, dass es sich beim \( \sigma_\epsilon \) aus der Aufgabenstellung, hier \( \hat{\sigma}_\epsilon \), um einen relativen Fehler handelt erhält man für \( \sigma_\epsilon = \hat{\sigma}_\epsilon \cdot \epsilon \allowbreak = 0.005 \cdot 0.1 = 0.0005 \)
+    \end{itemize}
+
+    Entsprechend ergibt sich:\\
+
+    \[
+        \begin{aligned}
+            \sigma_{ges} & = \sqrt{\left(  -\frac{N}{\epsilon^2 \cdot t} \cdot \sigma_\epsilon \right)^2 + \left( \frac{1}{\epsilon \cdot t} \cdot \sqrt{N} \right)^2} \\
+            &= \sqrt{\left(  -\frac{2356}{0,1^2 \cdot 60s} \cdot 0,0005 \right)^2 + \left( \frac{1}{0.1 \cdot 60s} \cdot \sqrt{2356} \right)^2} \\
+            & \approx 8,32 \ Bq
+        \end{aligned}
+    \]
+
+    Insgesamt ergibt sich also ein Wert von \( 392,67\pm8,32 \ Bq \) für die Aktivität.
+
+    \subsection*{b)}
+
+    Nimmt man an, dass \( A_{Verteilung} = E[A] = \frac{N}{60s} \) und wählt für \( t = 3600s \) folgt für \( N_h = A_{Verteilung} \cdot t = 141360 \). Entsprechend berechnet sich die Unsicherheit zu:
+
+    \[
+        \begin{aligned}
+            \sigma_{h;\ ges} & = \sqrt{\left(  -\frac{N_h}{\epsilon^2 \cdot t} \cdot \sigma_\epsilon \right)^2 + \left( \frac{1}{\epsilon \cdot t} \cdot \sqrt{N_h} \right)^2} \\
+            &= \sqrt{\left(  -\frac{141360}{0,1^2 \cdot 3600s} \cdot 0,0005 \right)^2 + \left( \frac{1}{0.1 \cdot 3600s} \cdot \sqrt{141360} \right)^2} \\
+            & \approx 2,22 \ Bq
+        \end{aligned}
+    \]
+
+    Nach einer Stunde ergäbe sich also ein Wert von \( 392,67\pm2,22 \ Bq \) für die Aktivität.
+
+\end{document}
