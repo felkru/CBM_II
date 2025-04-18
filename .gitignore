@@ -1,7 +1,7 @@
 experiments.ipynb
 
 # Ignore lecture slides
-Wiederholung/
+materials/
 
 # Ignore LaTeX build files
 *.aux
