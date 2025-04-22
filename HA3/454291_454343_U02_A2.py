@@ -16,3 +16,6 @@ from itertools import count
 # Email: felix.krueckel@rwth-aachen.de
 #
 
+import numpy as np
+
+data = np.loadtxt('')
