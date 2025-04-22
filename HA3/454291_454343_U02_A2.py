@@ -18,4 +18,7 @@ from itertools import count
 
 import numpy as np
 
-data = np.loadtxt('')
+data = np.genfromtxt('linfit_data_3.csv', delimiter=',', skip_header=1)
+
+#%%
+print('--- 2 a) ---')
