@@ -1,6 +1,5 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-from itertools import count
 
 ### Vorlagendatei für die Übungen zur Computergestützten Physik ###
 
@@ -15,6 +14,7 @@ from itertools import count
 # Name: Felix Krückel
 # Email: felix.krueckel@rwth-aachen.de
 #
+
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy as scp
@@ -56,17 +56,15 @@ print('Mit Fehlerpropagation ist der Fehler wesentlich kleiner und wir würden e
 display_plot()
 
 print('--- 2 c) ---')
+# Fehlerfortpflanzung ohne Korrelation
 x_val = 3
 
 y_at_3 = linear_model(x_val, *params_w_error)
-y_at_3_error = np.linalg.norm([cov_w_error[0,0], cov_w_error[1,1]])
+y_at_3_error = np.sqrt(x_val**2 * cov_w_error[0,0] + cov_w_error[1,1])
 print(f'f(3) = {y_at_3}±{y_at_3_error}, wenn man annimmt, dass m und c unkorreliert sind.')
 
 print('--- 2 d) ---')
+
 # Fehlerfortpflanzung mit Korrelation
-m_err_abs = np.sqrt(cov_w_error[0, 0])
-c_err_abs = np.sqrt(cov_w_error[1, 1])
-
-std_y_corr = np.sqrt(x_val**2 * m_err_abs**2) + (c_err_abs**2) + (2 * x_val * cov_w_error[0,1])
-
+std_y_corr = np.sqrt(x_val**2 * cov_w_error[0, 0] + cov_w_error[1,1] + 2 * x_val * cov_w_error[0,1])
 print(f'f(3) = {y_at_3}±{std_y_corr}, wenn man annimmt, dass m und c korreliert sind.')

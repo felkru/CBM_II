@@ -19,18 +19,17 @@ SAVE_FILE = 'roll_counts.csv'
 NUM_FACES = 6
 ALPHA = 0.05
 
-# --- Load Counts (Using NumPy) ---
+# --- Load Counts ---
 counts = np.zeros(NUM_FACES, dtype=int)
 if os.path.exists(SAVE_FILE):
     try:
         loaded_counts = np.loadtxt(SAVE_FILE, delimiter=',', dtype=int)
-        if loaded_counts.ndim == 1 and loaded_counts.size == NUM_FACES and np.all(loaded_counts > 0):
+        if loaded_counts.ndim == 1 and loaded_counts.size == NUM_FACES and not np.any(loaded_counts < 0):
             print(f'Existing counts found: {loaded_counts}')
             counts = loaded_counts
         else:
             print(f"WARNUNG: Falsches Format in {SAVE_FILE} (erwartet {NUM_FACES} Zahlen). Starte bei Null.")
-
-    except (ValueError, Exception) as e: # Catches issues during loadtxt like non-numbers
+    except ValueError as e:
         print(f"WARNUNG: Fehler beim Laden/Verarbeiten von {SAVE_FILE} ({type(e).__name__}), starte bei Null.")
 
 # --- Get New Rolls ---
