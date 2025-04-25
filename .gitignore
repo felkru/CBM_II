@@ -33,3 +33,5 @@ out/
 # Ignore Python virtual environments if you have one
 .venv/
 venv/
+
+digest.txt
