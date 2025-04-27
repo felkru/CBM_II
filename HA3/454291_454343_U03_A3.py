@@ -70,7 +70,7 @@ else:
 
 #3e) Residuenplot
 yres = ywerte - func(xwerte, a, b, c)
-plt.scatter(xwerte, yres)
+plt.errorbar(xwerte, yres, yerr=0.01, fmt='o')
 plt.title('Residuenplot')
 plt.xlabel('Daten')
 plt.ylabel('Residuen')
@@ -109,10 +109,11 @@ else:
 
 # Residuenplot
 yres = ywerte - kubisch(xwerte, a, b, c, d)
-plt.scatter(xwerte, yres)
+plt.errorbar(xwerte, yres, yerr=0.01, fmt='o', capsize=3)
 plt.title('Residuenplot für kubischen Fit')
 plt.xlabel('Daten')
 plt.ylabel('Residuen')
 plt.axhline(0, color='red', linestyle='--')  # Nullinie
 plt.show()
 print(f'Da die Residuen keiner systematischen Struktur folgen, passt das Modell gut zu den Daten.')
+
