@@ -1,6 +1,5 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-from itertools import count
 
 ### Vorlagendatei für die Übungen zur Computergestützten Physik ###
 
@@ -15,6 +14,7 @@ from itertools import count
 # Name: Felix Krückel
 # Email: felix.krueckel@rwth-aachen.de
 #
+
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy as scp
@@ -41,6 +41,7 @@ std = np.sqrt(var)
 print('--- 2 a) ---')
 setup_plot('Messpunkte mit Fehlerbalken (linfit_data_3.csv)')
 plt.errorbar(x, y, yerr=std, fmt='o', label='Messpunkte mit Fehlerbalken', capsize=3)
+print('Siehe Plot.')
 
 print('--- 2 b) ---')
 
@@ -51,12 +52,19 @@ params_w_error, cov_w_error = scp.optimize.curve_fit(linear_model, x, y, sigma=s
 plt.plot(x, linear_model(x, *params_no_error), label='Fitted linear model w/ and w/o error prop') # hier könnte man auch params_w_error verwenden, da die Werte identisch sind, da sie nur vom Datenset und den relativen Fehlern abhängen.
 print(f'Ohne Fehlerpropagation (absolute_sigma=False) ergit sich für m={params_no_error[0]}±{np.sqrt(cov_no_error[0,0])} und c={params_no_error[1]}±{np.sqrt(cov_no_error[1,1])}')
 print(f'Mit Fehlerpropagation (absolute_sigma=True) ergit sich für m={params_w_error[0]}±{np.sqrt(cov_w_error[0,0])} und c={params_w_error[1]}±{np.sqrt(cov_w_error[1,1])}')
-print('Mit Fehlerpropagation ist der Fehler wesentlich kleiner und wir würden entsprechend unseren Fehler unterschätzen, wenn absolute_error=False.')
+print('Mit Fehlerpropagation ist der Fehler wesentlich kleiner und wir würden entsprechend unseren Fehler überschätzen, wenn absolute_error=False.')
 display_plot()
 
 print('--- 2 c) ---')
-y_at_3 = linear_model(x, *params_w_error)
-y_at_3_error = np.norm(params_w_error[0,0], params_w_error[1,1])
+# Fehlerfortpflanzung ohne Korrelation
+x_val = 3
+
+y_at_3 = linear_model(x_val, *params_w_error)
+y_at_3_error = np.sqrt(x_val**2 * cov_w_error[0,0] + cov_w_error[1,1])
 print(f'f(3) = {y_at_3}±{y_at_3_error}, wenn man annimmt, dass m und c unkorreliert sind.')
 
 print('--- 2 d) ---')
+
+# Fehlerfortpflanzung mit Korrelation
+std_y_corr = np.sqrt(x_val**2 * cov_w_error[0, 0] + cov_w_error[1,1] + 2 * x_val * cov_w_error[0,1])
+print(f'f(3) = {y_at_3}±{std_y_corr}, wenn man annimmt, dass m und c korreliert sind.')
