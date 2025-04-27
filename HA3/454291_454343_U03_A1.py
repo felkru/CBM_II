@@ -17,6 +17,7 @@ from itertools import count
 #
 
 import numpy as np
+import scipy as scp
 
 def input_mode():
     # ask for user input as long they
@@ -34,8 +35,11 @@ def input_mode():
             return
 
 # @Tutor - Program execution starts here
+print('--- 1 a) ---')
 try:
     rolls = np.loadtxt("My_Dice_Rolls.csv", dtype=int, converters=float)
+    if (np.any(np.unique(rolls, return_counts=True)[1], rolls < 5)):
+        print('Die Stichprobe ist noch nicht groß genug. Der Test ist entsprechend nicht aussagekräftig. Füge mehr Daten hinzu.')
     add_input = input('Do you want to add additional dice rolls? (y/n): ').lower().strip() == 'y'
     if (add_input):
         input_mode()
@@ -46,4 +50,21 @@ except FileNotFoundError:
 except Exception:
     print('Es ist beim laden der Datei ein Fehler aufgetreten, der sich nicht automatisch korrigieren lässt. Bitte überprüfen sie den Inhalt und Namen ihrer Würfelergebnisdatei.')
     print('Continuing with example dice_rolls.')
-    rolls = [1,2,5,6,1,3,5,4]
+#    rolls = [1,2,5,6,1,3,5,4]
+
+outcomes, counts = np.unique(rolls, return_counts=True)
+print(f'Augenzahlen: {outcomes}')
+print(f'Anzahl:      {counts}')
+
+
+alpha = 0.05 # significance level
+ndof = 6 - 1
+std = np.std(rolls, ddof=1)
+
+chi2 = np.sum((rolls - np.mean(rolls))**2 / std**2)
+p_value = 1 - scp.stats.chi2.cdf(chi2, ndof)
+
+if (alpha < p_value):
+    print(f'Der Würfel ist laut Chi2-Test (alpha: {alpha}, tatsächliches alpha: {p_value}) nicht gezinkt.')
+else:
+    print(f'Der Würfel ist gezinkt. (alpha: {alpha}, tatsächliches alpha: {p_value})')
