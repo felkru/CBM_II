@@ -93,7 +93,7 @@ print(f'a = {a}, b = {b}, c = {c}, d = {d}')
 
 chiquadrat2 = np.sum(((ywerte-kubisch(xwerte, a, b, c, d))**2)/(0.01**2))
 print(f"Der Chiquadratwert ist {chiquadrat}")
-
+ndof = len(xwerte)-4
 alpha = 1 - stats.chi2.cdf(chiquadrat2, ndof)
 print(f'Alpha ist = {alpha}, das Modell passt also gut zu den Daten')
 
