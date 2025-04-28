@@ -30,7 +30,7 @@ def display_plot():
     plt.legend()
     plt.show()
 
-data = np.genfromtxt('linfit_data_3.csv', delimiter=',' )
+data = np.genfromtxt('linfit_data_3.csv', delimiter=',', skip_header=1 )
 
 x, y, var = data[:, 0], data[:, 1], data[:, 2]
 std = np.sqrt(var)
@@ -58,11 +58,12 @@ print('--- 2 c) ---')
 x_val = 3
 
 y_at_3 = linear_model(x_val, *params_w_error)
+# Fehlerfortpflanzungsformel
 y_at_3_error = np.sqrt(x_val**2 * cov_w_error[0,0] + cov_w_error[1,1])
 print(f'f(3) = {y_at_3}±{y_at_3_error}, wenn man annimmt, dass m und c unkorreliert sind.')
 
 print('--- 2 d) ---')
 
-# 3d) Fehlerfortpflanzung mit Korrelation
+# 2d) Fehlerfortpflanzung mit Korrelation
 std_y_corr = np.sqrt(x_val**2 * cov_w_error[0, 0] + cov_w_error[1,1] + 2 * x_val * cov_w_error[0,1])
 print(f'f(3) = {y_at_3}±{std_y_corr}, wenn man annimmt, dass m und c korreliert sind.')

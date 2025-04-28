@@ -59,7 +59,7 @@ alpha = 1 - stats.chi2.cdf(chiquadrat, ndof)
 print(f'Alpha ist = {alpha}, das Modell passt also nicht gut zu den Daten')
 
 # Kritischer χ²-Wert für 5%-Signifikanzniveau (rechtsseitig)
-chi2_critical = chi2.ppf(0.95, ndof)
+chi2_critical = chi2.ppf(0.95, ndof) #ppf ist Umkehrfunktion von cdf -> y=xWert, x=W'keit -> Ppf(W'keit)=xWert
 print(f"χ²-Wert bei 5%-Signifikanzniveau: {chi2_critical:.2f}, der tatsächliche Wert {chiquadrat:.2f} ist damit viel größer als der 5% Wert.")
 
 # Interpretation
@@ -90,9 +90,9 @@ plt.legend()
 plt.title('Messwerte mit kubischem Fit')
 plt.show()
 print(f'a = {a}, b = {b}, c = {c}, d = {d}')
-
+#χ² = Residuen²/Sigma²
 chiquadrat2 = np.sum(((ywerte-kubisch(xwerte, a, b, c, d))**2)/(0.01**2))
-print(f"Der Chiquadratwert ist {chiquadrat}")
+print(f"Der Chiquadratwert ist {chiquadrat2}")
 ndof = len(xwerte)-4
 alpha = 1 - stats.chi2.cdf(chiquadrat2, ndof)
 print(f'Alpha ist = {alpha}, das Modell passt also gut zu den Daten')
