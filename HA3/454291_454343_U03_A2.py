@@ -26,13 +26,11 @@ def setup_plot(title, y_label='y'):
     plt.title(title)
     plt.grid(True)
 
-
 def display_plot():
     plt.legend()
     plt.show()
 
-
-data = np.genfromtxt('linfit_data_3.csv', delimiter=',', skip_header=1)
+data = np.genfromtxt('linfit_data_3.csv', delimiter=',' )
 
 x, y, var = data[:, 0], data[:, 1], data[:, 2]
 std = np.sqrt(var)
@@ -65,6 +63,6 @@ print(f'f(3) = {y_at_3}±{y_at_3_error}, wenn man annimmt, dass m und c unkorrel
 
 print('--- 2 d) ---')
 
-# Fehlerfortpflanzung mit Korrelation
+# 3d) Fehlerfortpflanzung mit Korrelation
 std_y_corr = np.sqrt(x_val**2 * cov_w_error[0, 0] + cov_w_error[1,1] + 2 * x_val * cov_w_error[0,1])
 print(f'f(3) = {y_at_3}±{std_y_corr}, wenn man annimmt, dass m und c korreliert sind.')

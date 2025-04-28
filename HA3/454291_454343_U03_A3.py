@@ -27,7 +27,7 @@ from scipy.stats import chi2
 data = np.loadtxt('chi2.csv', delimiter=',', dtype=float)
 xwerte = data[:,0]
 ywerte = data[:,1]
-plt.errorbar(xwerte, ywerte, yerr=0.01, fmt='o')
+plt.errorbar(xwerte, ywerte, yerr=0.01, fmt='.')
 plt.title("Messwerte mit quadratischem Fit")
 plt.xlabel("x")
 plt.ylabel("y")
