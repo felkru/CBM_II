@@ -36,7 +36,7 @@ if os.path.exists(SAVE_FILE):
 print("Würfe eingeben ('q' zum Beenden):")
 new_rolls = []
 while True:
-    inp = input("> ").strip().lower()
+    inp = input("> ").strip().lower() #leerzeichen entfernen, buchstaben klein schreiben
     if inp == 'q': break
     try:
         roll = int(inp)
@@ -60,11 +60,13 @@ if total_rolls > 0:
     if expected_counts < 5:
         print("WARNUNG: Chi2-Test nicht aussagekräftig, weil Erwartungswert pro Bin < 5.")
 
-    chi2_stat = np.sum((counts - expected_counts) ** 2 / expected_counts)
+    chi2_stat = np.sum((counts - expected_counts) ** 2 / expected_counts) #Chi-Quadrat für Häufigkeitsvergleiche. misst, wie stark beobachtete Werte von erwarteten Werten abweichen
     ndof = NUM_FACES - 1
+    #alpha bestimmen
     p_value = 1 - scipy.stats.chi2.cdf(chi2_stat, ndof)
 
     print(f"Chi2: {chi2_stat:.4f}, p-Wert: {p_value:.4f}")
+    #Auswertung
     result = "GEZINKT" if p_value < ALPHA else "NICHT GEZINKT"
     print(f"Ergebnis (alpha={ALPHA}): {result}")
 else:
