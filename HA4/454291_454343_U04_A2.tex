@@ -1,0 +1,52 @@
+% 123456_789012_U04_A2b.tex
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\title{CP\_II - Blatt 2}
+\author{Julia Els, 454291 - Felix Krueckel, 454343}
+\date{30. April 2025}
+
+\begin{document}
+\maketitle
+
+\section*{Herleitung der t-Statistik für gleichgroße Stichproben}
+
+Gegeben ist die allgemeine Formel für die t-Statistik für zwei unabhängige Stichproben mit Stichprobengrößen $N_1$ und $N_2$ und unbekannter, aber als gleich angenommener Standardabweichung $\sigma$:
+\begin{equation}
+t = \frac{\bar{x}_1 - \bar{x}_2}{S_p \sqrt{1/N_1 + 1/N_2}}
+\end{equation}
+wobei $S_p$ die gepoolte Standardabweichung ist, berechnet aus der gepoolten Varianz $S_p^2$:
+\begin{equation}
+S_p^2 = \frac{(N_1 - 1) s_1^2 + (N_2 - 1) s_2^2}{N_1 + N_2 - 2}
+\end{equation}
+Hier sind $\bar{x}_1, \bar{x}_2$ die Stichprobenmittelwerte und $s_1^2, s_2^2$ die Stichprobenvarianzen.
+
+Wir sollen die Formel für den Fall herleiten, dass die Stichprobengrößen gleich sind, d.h. $N_1 = N_2 = N$.
+
+Setzen wir $N_1 = N$ und $N_2 = N$ in die Formel für die gepoolte Varianz $S_p^2$ ein:
+\begin{align*}
+S_p^2 &= \frac{(N - 1) s_1^2 + (N - 1) s_2^2}{N + N - 2} \\
+&= \frac{(N - 1) (s_1^2 + s_2^2)}{2N - 2} \\
+&= \frac{(N - 1) (s_1^2 + s_2^2)}{2(N - 1)}
+\intertext{Da $N > 1$ für eine Varianzberechnung, können wir $(N-1)$ kürzen:}
+S_p^2 &= \frac{s_1^2 + s_2^2}{2}
+\end{align*}
+
+Nun setzen wir $N_1 = N$, $N_2 = N$ und das Ergebnis für $S_p^2$ in die Formel für $t$ ein. Der Nenner des t-Wertes ist $S_p \sqrt{1/N_1 + 1/N_2}$:
+\begin{align*}
+\text{Nenner} &= \sqrt{S_p^2} \sqrt{\frac{1}{N} + \frac{1}{N}} \\
+&= \sqrt{\frac{s_1^2 + s_2^2}{2}} \sqrt{\frac{2}{N}} \\
+&= \sqrt{\frac{(s_1^2 + s_2^2)}{2} \cdot \frac{2}{N}} \\
+&= \sqrt{\frac{s_1^2 + s_2^2}{N}}
+\end{align*}
+
+Somit ergibt sich für die t-Statistik im Fall $N_1 = N_2 = N$:
+\begin{equation}
+t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_1^2 + s_2^2}{N}}}
+\end{equation}
+Dies ist die aus der Vorlesung bekannte Formel für den t-Test bei zwei gleichgroßen, unabhängigen Stichproben mit unbekannter, aber gleicher Varianz.
+
+\end{document}
