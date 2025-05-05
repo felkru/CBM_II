@@ -24,32 +24,18 @@ print("--- Aufgabe 2 ---")
 try:
     df_blood = pd.read_csv('blutwerte.csv')
     # Handle potential NaNs
-    df_blood_clean = df_blood.dropna(subset=['Entzündungswert'])
+    df_blood_clean = df_blood.dropna()
     print(f"Daten aus 'blutwerte.csv' geladen. {len(df_blood) - len(df_blood_clean)} Zeilen mit NaN entfernt.")
 
     # Separate groups
-    group_a_data = df_blood_clean[df_blood_clean['Gruppe'] == 'A']['Entzündungswert'].to_numpy()
-    group_b_data = df_blood_clean[df_blood_clean['Gruppe'] == 'B']['Entzündungswert'].to_numpy()
+    group_a_data = df_blood_clean['Medikament'].to_numpy()
+    group_b_data = df_blood_clean['Placebo'].to_numpy()
 
     n_a = len(group_a_data)
     n_b = len(group_b_data)
 
-    if n_a < 2 or n_b < 2:
-        raise ValueError("Nicht genügend Daten in einer oder beiden Gruppen nach NaN-Entfernung.")
-
     print(f"Anzahl Patienten Gruppe A (Medikament): {n_a}")
     print(f"Anzahl Patienten Gruppe B (Placebo): {n_b}")
-
-except FileNotFoundError:
-    print("FEHLER: Datei 'blutwerte.csv' nicht gefunden. Bitte sicherstellen, dass sie im selben Verzeichnis liegt.")
-    # Exit or set dummy data to prevent further errors
-    exit()
-except ValueError as e:
-    print(f"FEHLER: {e}")
-    exit()
-except Exception as e:
-    print(f"Ein unerwarteter Fehler beim Laden der Daten ist aufgetreten: {e}")
-    exit()
 
 
 # --- Teil a) Annahmen prüfen & Plot ---
