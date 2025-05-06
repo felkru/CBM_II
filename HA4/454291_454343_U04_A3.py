@@ -81,7 +81,6 @@ t_values = np.linspace(mu_defect - 4*sigma_defect, mu_intact + 4*sigma_intact, 5
 plt.plot(t_values, dist_intact.pdf(t_values), 'g-', lw=2, label=f'Intakt (N({mu_intact}, {sigma_intact}))')
 plt.plot(t_values, dist_defect.pdf(t_values), 'r-', lw=2, label=f'Defekt (N({mu_defect}, {sigma_defect}))')
 
-
 # Add Grenzwert tc
 plt.axvline(tc_example, color='k', linestyle='--', label=f'Grenzwert tc = {tc_example}')
 
@@ -97,13 +96,11 @@ plt.fill_between(t_fill_beta, dist_defect.pdf(t_fill_beta), color='cyan', alpha=
 plt.title('Verteilungen der Messung t für intakte und defekte Displays')
 plt.xlabel('Messparameter t')
 plt.ylabel('Wahrscheinlichkeitsdichte')
-plt.legend(fontsize='small')
+plt.legend(fontsize='large')
 plt.grid(True, alpha=0.5)
 plt.ylim(bottom=0)
 plt.tight_layout()
-# plt.savefig('123456_789012_U04_A3a.png')
 plt.show()
-
 
 # --- Teil b) ROC-Kurve ---
 print("\n--- Teil b) ROC-Kurve (Sensitivität vs. Falsch-Positiv-Rate) ---")
@@ -117,7 +114,7 @@ tpr = dist_defect.cdf(tc_values_roc)
 fpr = dist_intact.cdf(tc_values_roc)
 
 plt.figure(figsize=(8, 8))
-plt.plot(fpr, tpr, lw=2, label='ROC-Kurve')
+plt.plot(fpr, tpr, lw=2, label='ROC-Kurve(t_c)')
 plt.plot([0, 1], [0, 1], 'k--', label='Zufallsklassifikator') # Diagonal line
 plt.scatter(alpha, sensitivity, marker='o', color='red', s=100, label=f'Punkt für tc={tc_example}\n(FPR={alpha:.3f}, TPR={sensitivity:.3f})', zorder=5)
 
@@ -129,9 +126,7 @@ plt.ylim([0.0, 1.0])
 plt.grid(True)
 plt.legend()
 plt.tight_layout()
-# plt.savefig('123456_789012_U04_A3b.png')
 plt.show()
-
 
 # --- Teil c) Erwarteter Gewinn optimieren ---
 print("\n--- Teil c) Optimierung des erwarteten Gewinns ---")
@@ -173,7 +168,6 @@ plt.ylabel('Erwarteter Gewinn (€)')
 plt.legend()
 plt.grid(True, alpha=0.5)
 plt.tight_layout()
-# plt.savefig('123456_789012_U04_A3c.png')
 plt.show()
 
 # --- Teil d) Monte Carlo Simulation ---
@@ -185,7 +179,7 @@ tc_values_mc = np.linspace(optimal_tc - 3, optimal_tc + 3, 50) # Focus around op
 
 mc_mean_profits = []
 mc_std_profits = []
-np.random.seed(2025) # for reproducibility
+np.random.seed(432) # for reproducibility
 
 print(f"Starte Monte Carlo Simulation (N={N_sim}, M={M_sim})...")
 
@@ -218,7 +212,7 @@ for i, tc_mc in enumerate(tc_values_mc):
 
     # Calculate mean and std dev over M repetitions
     mc_mean_profits.append(np.mean(profits_for_tc))
-    mc_std_profits.append(np.std(profits_for_tc)) # Uncertainty of the mean estimate
+    mc_std_profits.append(np.std(profits_for_tc, ddof=1)) # Uncertainty of the mean estimate
 
     # Progress indicator
     if (i+1)%10 == 0 or i == len(tc_values_mc)-1:
@@ -241,7 +235,6 @@ plt.ylabel('Erwarteter Gewinn (€)')
 plt.legend()
 plt.grid(True, alpha=0.5)
 plt.tight_layout()
-# plt.savefig('123456_789012_U04_A3d.png')
 plt.show()
 
 print("Vergleich: Die Monte-Carlo-Simulation bestätigt das Ergebnis aus Teil c). Die simulierten mittleren Gewinne liegen sehr nahe an der theoretischen Kurve, und das Maximum der Simulation befindet sich im Bereich des theoretisch berechneten optimalen tc-Wertes.")
