@@ -43,7 +43,7 @@ if not res_bg.success:
 print("Untergrund-Fit war erfolgreich!")
 
 # --- Signal+Untergrund-Modell --- # mu frei
-init_sig = [40.0, 0.2, 1.0]             # Startwerte für A, λ, μ
+init_sig = [40.0, 0.2, 10.0]             # Startwerte für A, λ, μ
 bounds_sig = [(1e-6, None), (1e-6, None), (0.0, None)]
 res_sig = minimize(neg_logli, x0=init_sig, args=(x, counts, None), method='L-BFGS-B', bounds=bounds_sig)
 if not res_sig.success:
@@ -67,12 +67,14 @@ print(f"  NLL minimum= {res_sig.fun:.4f}")
 
 #c)
 xvalues = np.linspace(np.min(x), np.max(x), 1000)
-umfunc = ew(xvalues, res_sig.x[0], res_sig.x[1], res_sig.x[2])
-#mfunc =
-plt.scatter(x, counts)
-plt.plot(xvalues, umfunc)
+#Untergrund und Signal
+signal_func = ew(xvalues, res_sig.x[0], res_sig.x[1], res_sig.x[2])
+#Untergrund
+untergrund_func = ew(xvalues, res_bg.x[0], res_bg.x[1], 0)
+# plot datapoints
+plt.errorbar(x, counts, yerr=np.sqrt(counts), fmt='o')
+plt.plot(xvalues, signal_func)
+plt.plot(xvalues, untergrund_func)
 plt.xlabel('Massenspektrum [GeV]')
 plt.ylabel("Zählrate pro GeV")
 plt.show()
-
-print(res_sig)
