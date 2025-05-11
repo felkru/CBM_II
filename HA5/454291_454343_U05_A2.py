@@ -8,13 +8,13 @@
 # Name: Felix Krückel
 # Email: felix.krueckel@rwth-aachen.de
 
+# Dear Lars, please run `pip install tqdm` before running this file as you'll get an error if it's not installed. You can also use the attached requirements.txt file.
+
 import numpy as np
 import pandas as pd
-from jupyter_server.auth import passwd
 from scipy import stats
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
-import einops
 from tqdm import tqdm
 import sys
 
