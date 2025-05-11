@@ -15,6 +15,8 @@ from scipy import stats
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 import einops
+from tqdm import tqdm
+import sys
 
 # --- a) Erwartungswert-Modelle ---
 def ew(x, A, lam, mu):
@@ -106,16 +108,16 @@ max_logL_global = -res_sig.fun
 mu_mle_from_global_fit = res_sig.x[2]
 
 confidence = 0.9
-num_mu_scan_points = 200
+num_mu_scan_points = 10000
 scan_mu_min_val = 0.0
-scan_mu_max_val = max(mu_mle_from_global_fit * 2.0, mu_mle_from_global_fit + 4.0, 4.0) # Heuristic scan range
+scan_mu_max_val = 50
 
 mu_scan_values = np.linspace(scan_mu_min_val, scan_mu_max_val, num_mu_scan_points)
 profiled_NLL_values_at_mu = []
 
 initial_A_lambda_for_profiled_fit = [res_sig.x[0], res_sig.x[1]]
 bounds_A_lambda_for_profiled_fit = [(1e-6, None), (1e-6, None)]
-for mu_fixed in mu_scan_values:
+for mu_fixed in tqdm(mu_scan_values, file=sys.stdout): # file=sys.stdout ensures tqdm output is black on most terminals
     res_profiled = minimize(neg_logli,
                             x0=initial_A_lambda_for_profiled_fit,
                             args=(x, counts, mu_fixed),
@@ -129,4 +131,5 @@ mu_values_within_CI = mu_scan_values[mu_is_in_CI_mask]
 lower_bound_mu = np.min(mu_values_within_CI)
 upper_bound_mu = np.max(mu_values_within_CI)
 
+print(f'Schrittweite (Konfidenzintervall): Δmu = {(scan_mu_max_val-scan_mu_min_val)/num_mu_scan_points}')
 print(f'Das 90% Konfidenzintervall von μ ist [{lower_bound_mu:.2f}, {upper_bound_mu:.2f}].')
