@@ -14,7 +14,7 @@ import scipy.stats as stats
 confidence = 0.9
 alpha = (1 - confidence)/2
 observation = 5
-mu = np.linspace(0.1,100, 10000)
+mu = np.linspace(0.1,100, 1000000)
 lower_limit = 0
 upper_limit = 0
 

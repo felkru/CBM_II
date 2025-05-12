@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import sys
 
-# --- a) Erwartungswert-Modelle ---
+# --- a) Erwartungswert-Modelle/Funktion implementieren, die -log(L) für Signal und Signal+Untergrund berechnet  ---
 def ew(x, A, lam, mu):
     background = A * np.exp(-lam * x)
     signal     = mu * stats.norm.pdf(x, loc=7, scale=1)
@@ -37,7 +37,7 @@ df     = pd.read_csv("Data_Likelihood.csv", header=None, names=["counts"])
 x      = np.arange(1, len(df) + 1)
 counts = df["counts"].to_numpy()
 
-#b)
+#b) Minimieren der neg. Log-li. Funktion
 # --- Untergrund-Modell (mu=0) --- # fix_mu=0
 init_bg = [40.0, 0.2]                   # Startwerte für A, λ
 bounds_bg = [(1e-6, None), (1e-6, None)]
@@ -69,7 +69,7 @@ print(f"  λ̂          = {res_sig.x[1]:.4f}")
 print(f"  μ̂          = {res_sig.x[2]:.4f}")
 print(f"  NLL minimum= {res_sig.fun:.4f}")
 
-#c)
+#c) grafisch darstellen
 x_values = np.linspace(np.min(x), np.max(x), 1000)
 #Untergrund und Signal
 signal_func = ew(x_values, res_sig.x[0], res_sig.x[1], res_sig.x[2])
@@ -83,11 +83,12 @@ plt.xlabel('Massenspektrum [GeV]')
 plt.ylabel("Zählrate pro GeV")
 plt.show()
 
-# d)
+# d) W'keit, dass Daten mit Untergrundmodell vereinbar (alpha/p-Wert) mit Wilk's Theorem
+
+#Code aus Wilks Theorem
 # lambda_0 = res_sig.x[1]
 # n = 5000
 # dataset = np.random.poisson(lambda_0, size=n)
-
 # test_val = 2 * n * (np.mean(dataset) * np.log(np.mean(dataset) / lambda_0) + lambda_0 - np.mean(dataset))
 # p_value = 1 - stats.chi2.cdf(test_val, df=1)
 # print(f'Die Wahrscheinlichkeit, dass die Daten zum Untergrundmodell passen ist: {p_value}')
@@ -96,9 +97,7 @@ test_val = -2 * (res_sig.fun - res_bg.fun)
 p_value = 1 - stats.chi2.cdf(test_val, df=1)
 print(f'\nDie Wahrscheinlichkeit, dass die Daten zum Untergrundmodell passen, unter der Annahme,\ndass entweder das Untergrund oder das Signalmodell das Phänomen perfekt beschreiben, ist {p_value:.2%}.')
 
-# e)
-print(f'\n--- 90% Konfidenzintervall für μ ---')
-
+# # e) --- 90% Konfidenzintervall für μ ---
 def check_LL_within_threshold(profiled_LL_array, global_max_LL_scalar, alpha):
     chi2_critical = stats.chi2.ppf(1 - alpha, df=1)
     logL_threshold = global_max_LL_scalar - (chi2_critical / 2.0)
@@ -133,3 +132,6 @@ upper_bound_mu = np.max(mu_values_within_CI)
 
 print(f'Schrittweite (Konfidenzintervall): Δmu = {(scan_mu_max_val-scan_mu_min_val)/num_mu_scan_points}')
 print(f'Das 90% Konfidenzintervall von μ ist [{lower_bound_mu:.2f}, {upper_bound_mu:.2f}].')
+
+
+
