@@ -132,6 +132,3 @@ upper_bound_mu = np.max(mu_values_within_CI)
 
 print(f'Schrittweite (Konfidenzintervall): Δmu = {(scan_mu_max_val-scan_mu_min_val)/num_mu_scan_points}')
 print(f'Das 90% Konfidenzintervall von μ ist [{lower_bound_mu:.2f}, {upper_bound_mu:.2f}].')
-
-
-
