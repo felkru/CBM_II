@@ -12,27 +12,28 @@ import numpy as np
 import scipy.stats as stats
 
 confidence = 0.87
-alpha = (1 - confidence)/2
+alpha = (1 - confidence)
+# alpha = (1 - confidence)/2
 observation = 9
-mu = np.linspace(0.1,150, 1_000_000)
+mu = np.linspace(0.1,250, 100000)
 lower_limit = 0
 upper_limit = 0
 
-for mu_ in mu:
-    if (1-stats.expon.cdf(observation, scale=mu_) >alpha):
-        lower_limit = mu_
-        break
+# for mu_ in mu:
+#     if (1-stats.expon.cdf(observation, scale=mu_) >alpha):
+#         lower_limit = mu_
+#         break
 
 for mu_ in mu:
     if (stats.expon.cdf(observation, scale=mu_) <alpha):
         upper_limit = mu_
         break
 
-print("Unteres Limit =", lower_limit)
+# print("Unteres Limit =", lower_limit)
 print("Oberes Limit = ", upper_limit)
-print(f"Gerundet: {lower_limit:.2f}-{upper_limit:.2f}")
+print(f"Gerundet: {upper_limit:.2f}")
 
 #stats.poisson.sf(observation-1, mu_)
 
-# Unteres Limit = 3.292723292723293
-# Oberes Limit =  133.9112169112169
+# Unteres Limit = 4.413317133171331
+# Oberes Limit =  64.62732427324272
