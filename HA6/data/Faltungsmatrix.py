@@ -23,3 +23,5 @@ R[19, 18] = 0.3
 R[18, 18] = 0.3
 R[17, 18] = 0.3
 R[17, 19] = 0.2
+
+np.savetxt('convolution_matrix.csv', R,  delimiter=',', fmt='%f')
