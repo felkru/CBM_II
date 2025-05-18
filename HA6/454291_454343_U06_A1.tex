@@ -14,36 +14,19 @@
 
 \maketitle
 
-\section*{meine lösung}
-\section*{Aufgabe 1 a)}
-
-\begin{align}
-    f_w & = \int f_1(x)f_2(w-x) \,dx   \\
-        & = \int 1 \cdot x + x \cdot 1 \\
-        & = \int 2x \,dx               \\
-    f_w & = \boxed{x^2}                \\
-\end{align}
-
-
-% aistudios lösung
-\newpage
-
-\section*{aistudios lösung}
 \section*{Aufgabe 1: k-fache Faltung}
 \subsection*{a) k $\in \{2\}$}
 
 \subsubsection*{Fall k=2}
-Für $k=2$ ist $w = x_1 + x_2$. Wir bezeichnen die Dichte von $w$ als $f_{w_2}(w)$.
+Für $k=2$ ist $w = x_1 + x_2$. Wir bezeichnen die Dichte von $w$ als $f_{2}(w)$.
 \begin{equation}
-    f_{w_2}(w) = \int_{-\infty}^{\infty} f(x) f(w-x) dx
+    f_{2}(w) = \int_{-\infty}^{\infty} f(x) f(w-x) dx
 \end{equation}
 Der Integrand $f(x)f(w-x)$ ist nur dann von Null verschieden, wenn beide Terme von Null verschieden sind. Dies bedeutet:
 \begin{enumerate}
     \item $0 \le x \le 1$
     \item $0 \le w-x \le 1 \implies w-1 \le x \le w$
 \end{enumerate}
-Kombiniert müssen beide Bedingungen erfüllt sein, d.h. $x$ muss im Intervall $[\max(0, w-1), \min(1, w)]$ liegen. Damit das Integral nicht Null ist, muss $\max(0, w-1) < \min(1, w)$ gelten.
-Der mögliche Wertebereich für $w$ ist $[0,2]$.
 
 \paragraph{Fall 2.1: $0 \le w \le 1$}
 In diesem Fall ist $w-1 \le 0$. Die Bedingungen für $x$ werden zu:
@@ -51,7 +34,7 @@ $\max(0, w-1) = 0$
 $\min(1, w) = w$
 Somit ist das Integrationsintervall $[0, w]$.
 \begin{equation}
-    f_{w_2}(w) = \int_0^w 1 \cdot 1 dx = \int_0^w dx = [x]_0^w = w
+    f_{2}(w) = \int_0^w 1 \cdot 1 dx = \int_0^w dx = [x]_0^w = w
 \end{equation}
 
 \paragraph{Fall 2.2: $1 < w \le 2$}
@@ -60,15 +43,16 @@ $\max(0, w-1) = w-1$
 $\min(1, w) = 1$
 Somit ist das Integrationsintervall $[w-1, 1]$.
 \begin{equation}
-    f_{w_2}(w) = \int_{w-1}^1 1 \cdot 1 dx = \int_{w-1}^1 dx = [x]_{w-1}^1 = 1 - (w-1) = 2-w
+    f_{2}(w) = \int_{w-1}^1 1 \cdot 1 dx = \int_{w-1}^1 dx = [x]_{w-1}^1 = 1 - (w-1) = 2-w
 \end{equation}
 
 \paragraph{Fall 2.3: $w < 0$ oder $w > 2$}
-In diesen Fällen ist das Integral Null, da die Schnittmenge der Träger leer ist.
-Zusammenfassend für $k=2$:
+In diesen Fällen ist das Integral Null, da die Schnittmenge der Träger leer ist. \\
+
+
+Zusammenfassend gilt für $k=2$:
 \begin{equation}
-    f_{w_2}(w) = \begin{cases} w & 0 \le w \le 1 \\ 2-w & 1 < w \le 2 \\ 0 & \text{sonst} \end{cases}
+    f_{2}(w) = \begin{cases} w & 0 \le w \le 1 \\ 2-w & 1 < w \le 2 \\ 0 & \text{sonst} \end{cases}
 \end{equation}
-Der Träger der Verteilung ist $[0,2]$. Dies ist die Dichte der Irwin-Hall-Verteilung für $n=2$.
 
 \end{document}
