@@ -45,7 +45,7 @@ print("-------------------------\n")
 # --- Vorbereitung für numerische Verfahren ---
 # Lambdifizierung der symbolischen Ausdrücke für numpy
 f_numerical = sp.lambdify(((x, y),), f_sym, 'numpy') #änderung: Input-Signatur zu ((x, y),) geändert, um Tupel als Input zu erlauben
-grad_f_numerical = sp.lambdify(((x, y),), grad_f_sym, 'numpy') #änderung: Input-Signatur zu ((x, y),) geändert
+grad_f_numerical = sp.lambdify(((x, y),), grad_f_sym, 'numpy')
 hess_f_numerical = sp.lambdify(((x, y),), hess_f_sym, 'numpy') #änderung: Input-Signatur zu ((x, y),) geändert
 
 # Wrapper-Funktionen für scipy.optimize und eigene Newton-Methode
@@ -219,7 +219,6 @@ plt.ylim(y_min, y_max)
 plt.gca().set_aspect('equal', adjustable='box') # Gleiches Seitenverhältnis für x und y
 plt.show()
 
-print("Plot erstellt.")
 print("-------------------------\n")
 
 # --- Ende Teil f ---
