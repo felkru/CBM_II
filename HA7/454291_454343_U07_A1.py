@@ -113,6 +113,6 @@ else:
 
 print(f"\n--- Endergebnis Teil c) ---")
 print(f"Ergebnis nach {M_steps} Newton-Schritten, Startpunkt {x0_initial}:")
-print(f"x_{M_steps} = {xM_result}")
-print(f"Funktionswert f(x_{M_steps}) = {f_numerical(xM_result[0], xM_result[1]):.6f}")
+print(f"x_{M_steps} = {result}")
+print(f"Funktionswert f(x_{M_steps}) = {f_numerical(result[0], result[1]):.6f}")
 print("-------------------------")
