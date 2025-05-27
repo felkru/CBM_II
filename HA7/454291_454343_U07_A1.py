@@ -12,6 +12,8 @@
 import sympy as sp
 import numpy as np
 from scipy.optimize import minimize
+from torch.autograd import variable
+
 
 def define_symbolically():
     x, y, a, b = sp.symbols('x y a b')
@@ -22,10 +24,12 @@ def define_symbolically():
 
     grad_f_sym = [sp.diff(f_specific, x), sp.diff(f_specific, y)]
 
-    hess_f_sym = sp.Matrix([
-        [sp.diff(f_specific, x, x), sp.diff(f_specific, x, y)],
-        [sp.diff(f_specific, y, x), sp.diff(f_specific, y, y)]
-    ])
+    hess_f_sym = sp.hessian(f_specific, (x, y))
+
+    #Matrix([
+        #[sp.diff(f_specific, x, x), sp.diff(f_specific, x, y)],
+        #[sp.diff(f_specific, y, x), sp.diff(f_specific, y, y)]
+    #]))
 
     return f_specific, grad_f_sym, hess_f_sym, (x, y)
 
@@ -135,38 +139,21 @@ print("-------------------------\n")
 # --- Ausführung für Teil e: Finden von M für gegebene Genauigkeit ---
 print("\n--- Ausführung für Teil e: Finden der Schrittanzahl für Genauigkeit ---")
 epsilon_part_e = 10**-2 # 10^-2
-M_max_part_e = 20 # Maximale Anzahl Schritte, um Konvergenz zu finden (z.B. 20, höher als Selbstkontrolle)
+M_max_part_e = 20 # Maximale Anzahl Schritte, um Konvergenz zu finden
 
-# x_optimized wurde bereits in Teil b) berechnet
-#änderung: Aufruf von newton_verfahren angepasst, um x_history_e zu erhalten.
 xM_result_e, first_converged_step, x_history_e = newton_verfahren(x0_initial, f_wrapper, grad_f_wrapper, hess_f_wrapper, M_max_part_e, x_optimized=x_optimized, epsilon=epsilon_part_e)
 
 print(f"\n--- Ergebnis Teil e) ---")
 if first_converged_step is not None:
-    print(f"Die Genauigkeit ||x_k - x̃|| <= {epsilon_part_e} wird erstmalig nach M = {first_converged_step} Schritten unterschritten.") #änderung: Ausgabe basierend auf der gefundenen Schrittnummer
+    print(f"Die Genauigkeit ||x_k - x̃|| <= {epsilon_part_e} wird erstmalig nach M = {first_converged_step} Schritten unterschritten.")
 else:
-    print(f"Die Genauigkeit ||x_k - x̃|| <= {epsilon_part_e} wurde innerhalb von {M_max_part_e} Schritten nicht erreicht.") #änderung: Ausgabe, falls keine Konvergenz gefunden wurde
+    print(f"Die Genauigkeit ||x_k - x̃|| <= {epsilon_part_e} wurde innerhalb von {M_max_part_e} Schritten nicht erreicht.")
 
-print(f"Punkt nach {M_max_part_e} Schritten: x_{M_max_part_e} = {xM_result_e}") #änderung: Ausgabe des Endpunkts
+print(f"Punkt nach {M_max_part_e} Schritten: x_{M_max_part_e} = {xM_result_e}")
 print("-------------------------\n")
 
-# --- Hinweis: Zur Selbstkontrolle (nicht Teil der abgegebenen Lösung, nur zur Überprüfung) ---
-# Die Ergebnisse x_k der ersten Iterations-Schritte k sind:
-# x_1 = [1.04138747, 1.08207086]
-# x_2 = [0.95876902, 0.91154631]
-# x_3 = [1.03965373, 1.0753438]
-# x_4 = [0.97646384, 0.94882795]
-# x_5 = [1.00373334, 1.00687187]
-# x_6 = [1.00001532, 1.00001537]
-# x_7 = [1.1, 1.1] # Dies scheint ein Tippfehler zu sein, x_7 sollte sehr nah am Optimum sein
-# Nach M = 5 Schritten unterschreitet die Genauigkeit das gegebene ϵ mit einer normierten Differenz von 7.82e-03.
-# --> Der Code sollte dies bestätigen, wenn M_max_part_e >= 5 und epsilon=0.01 ist. 7.82e-03 < 0.01 ist korrekt.
-
-#änderung: Import matplotlib for plotting. # Diesen Import am Anfang des Skripts platzieren, falls noch nicht da.
 import matplotlib.pyplot as plt
 
-# --- Teil f: Freiwillig - Darstellung ---
-#änderung: Code für Teil f (Plotting) hinzugefügt.
 print("\n--- Ergebnisse Teil f) ---")
 print("Erstelle Plot der Funktion und des Newton-Pfades...")
 

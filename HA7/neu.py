@@ -1,224 +1,317 @@
-# 1)
-# Matrikelnummer: 454291
-# Name: Julia Els
-# Email: julia.els@rwth-aachen.de
-#
-# 2)
-# Matrikelnummer: 454343
-# Name: Felix Krückel
-# Email: felix.krueckel@rwth-aachen.de
-
-
-import sympy as sp
+# main.py (der von dir bereitgestellte und von mir verbesserte Code)
 import numpy as np
-from scipy.optimize import minimize
-
-def define_symbolically():
-    x, y, a, b = sp.symbols('x y a b')
-    a_val, b_val = 1, 100
-
-    f = (a - x)**2 + b * (y - x**2)**2 + 0.1 * sp.sin(3 * sp.pi * x) * sp.sin(3 * sp.pi * y)
-    f_specific = f.subs({a: a_val, b: b_val})
-
-    grad_f_sym = [sp.diff(f_specific, x), sp.diff(f_specific, y)]
-
-    hess_f_sym = sp.Matrix([
-        [sp.diff(f_specific, x, x), sp.diff(f_specific, x, y)],
-        [sp.diff(f_specific, y, x), sp.diff(f_specific, y, y)]
-    ])
-
-    return f_specific, grad_f_sym, hess_f_sym, (x, y)
-
-# --- Teil a: Symbolische Berechnung ---
-f_sym, grad_f_sym, hess_f_sym, (x, y) = define_symbolically()
-
-print("--- Ergebnisse Teil a) ---")
-print("Symbolische Funktion f(x, y):")
-print(f_sym)
-print("\nSymbolischer Gradient ∇f(x, y):")
-grad_vector = sp.Matrix(grad_f_sym)
-sp.pprint(grad_vector)
-print("\nSymbolische Hesse-Matrix Hf(x, y):")
-sp.pprint(hess_f_sym)
-print("-------------------------\n")
-
-# --- Vorbereitung für numerische Verfahren ---
-# Lambdifizierung der symbolischen Ausdrücke für numpy
-f_numerical = sp.lambdify(((x, y),), f_sym, 'numpy') #änderung: Input-Signatur zu ((x, y),) geändert, um Tupel als Input zu erlauben
-grad_f_numerical = sp.lambdify(((x, y),), grad_f_sym, 'numpy')
-hess_f_numerical = sp.lambdify(((x, y),), hess_f_sym, 'numpy') #änderung: Input-Signatur zu ((x, y),) geändert
-
-# Wrapper-Funktionen für scipy.optimize und eigene Newton-Methode
-def f_wrapper(params):
-    return f_numerical(params)
-
-def grad_f_wrapper(params):
-    return np.array(grad_f_numerical(params))
-
-def hess_f_wrapper(params):
-    return np.array(hess_f_numerical(params))
-
-x0_initial = np.array([1.075, 1.0625])
-
-# --- Teil b: Vergleich mit scipy.optimize ---
-print("--- Ergebnisse Teil b) ---")
-result = minimize(f_wrapper, x0_initial, method='trust-ncg', jac=grad_f_wrapper, hess=hess_f_wrapper)
-x_optimized = result.x # = x~
-print(f"Ergebnis von scipy.optimize:")
-print(result) #ändrung: Das komplette Ergebnis ausgeben für mehr Details
-print(f"\nGefundener Extremalpunkt (näherungsweise): x̃ = {x_optimized}")
-print(f"Funktionswert an diesem Punkt: f(x̃) = {f_wrapper(x_optimized):.6f}")
-print("-------------------------\n")
-
-
-# --- Teil c: Implementierung Newton-Schritt ---
-def newton_schritt(xk: np.ndarray, grad_f_xk: np.ndarray, hess_f_xk: np.ndarray) -> np.ndarray:
-    try:
-        hess_inv = np.linalg.inv(hess_f_xk)
-    except np.linalg.LinAlgError:
-        print("Hesse-Matrix ist singulär. Newton-Schritt nicht möglich.")
-        return xk
-
-    delta_x = hess_inv @ grad_f_xk
-    xk_plus_1 = xk - delta_x
-    return xk_plus_1
-
-# --- Teil d und e: Implementierung und Ausführung Newton-Verfahren ---
-#änderung: Rückgabe ist Tupel (xM, erster_konvergierter_schritt, x_history).
-def newton_verfahren(x0: np.ndarray, f_func: callable, grad_f_func: callable, hess_f_func: callable, M: int, x_optimized: np.ndarray = None, epsilon: float = None) -> tuple[np.ndarray, int | None, list[np.ndarray]]:
-    xk = np.array(x0, dtype=float)
-    print(f"Startpunkt x0 = {xk}")
-    print(f"Funktionswert f(x0) = {f_func(xk):.6f}")
-
-    first_converged_step = None
-
-    # Speichern der Zwischenergebnisse für Selbstkontrolle (optional, basierend auf Aufgabenhinweis)
-    x_history = [np.copy(xk)] #änderung: Array zum Speichern der Iterationspunkte. np.copy, um spätere Modifikationen von xk nicht zu beeinflussen.
-
-    for k in range(M):
-        grad_f_xk_num = np.array(grad_f_func(xk))
-        hess_f_xk_num = np.array(hess_f_func(xk))
-
-        xk_plus_1 = newton_schritt(xk, grad_f_xk_num, hess_f_xk_num)
-
-        # Überprüfen der Konvergenzbedingung für Teil e)
-        if epsilon is not None and x_optimized is not None and first_converged_step is None:
-            norm_diff = np.linalg.norm(xk_plus_1 - x_optimized)
-            if norm_diff <= epsilon:
-                first_converged_step = k + 1 #Speichert den Schrittindex (beginnend bei 1)
-                print(f"Konvergenz ||x_{k+1} - x̃|| <= {epsilon} erreicht bei Schritt {k+1}")
-
-        xk = xk_plus_1
-
-        x_history.append(np.copy(xk)) #änderung: Aktuellen Punkt zur Historie hinzufügen.
-
-        print(f"\nNach Schritt {k+1}/{M}:")
-        print(f"Aktueller Punkt x_{k+1} = {xk}")
-        print(f"Funktionswert f(x_{k+1}) = {f_func(xk):.6f}")
-
-    xM = xk # Das Ergebnis nach M Schritten
-    return xM, first_converged_step, x_history #änderung: Rückgabe des Endpunkts, des Schritts bei Konvergenz und der Historie.
-
-# --- Ausführung für Teil d: M=2 Schritte ---
-print("\n--- Ausführung für Teil d: M=2 Newton-Schritte ---")
-M_part_d = 2
-
-xM_result_d, _, _ = newton_verfahren(x0_initial, f_wrapper, grad_f_wrapper, hess_f_wrapper, M_part_d) #änderung: Aufruf von newton_verfahren angepasst an neue Signatur.
-
-print(f"\n--- Endergebnis Teil d) ---")
-print(f"Ergebnis nach {M_part_d} Newton-Schritten, Startpunkt {x0_initial}:")
-print(f"x_{M_part_d} = {xM_result_d}")
-print(f"Funktionswert f(x_{M_part_d}) = {f_wrapper(xM_result_d):.6f}")
-print("-------------------------\n")
-
-
-# --- Ausführung für Teil e: Finden von M für gegebene Genauigkeit ---
-print("\n--- Ausführung für Teil e: Finden der Schrittanzahl für Genauigkeit ---")
-epsilon_part_e = 10**-2 # 10^-2
-M_max_part_e = 20 # Maximale Anzahl Schritte, um Konvergenz zu finden (z.B. 20, höher als Selbstkontrolle)
-
-# x_optimized wurde bereits in Teil b) berechnet
-#änderung: Aufruf von newton_verfahren angepasst, um x_history_e zu erhalten.
-xM_result_e, first_converged_step, x_history_e = newton_verfahren(x0_initial, f_wrapper, grad_f_wrapper, hess_f_wrapper, M_max_part_e, x_optimized=x_optimized, epsilon=epsilon_part_e)
-
-print(f"\n--- Ergebnis Teil e) ---")
-if first_converged_step is not None:
-    print(f"Die Genauigkeit ||x_k - x̃|| <= {epsilon_part_e} wird erstmalig nach M = {first_converged_step} Schritten unterschritten.") #änderung: Ausgabe basierend auf der gefundenen Schrittnummer
-else:
-    print(f"Die Genauigkeit ||x_k - x̃|| <= {epsilon_part_e} wurde innerhalb von {M_max_part_e} Schritten nicht erreicht.") #änderung: Ausgabe, falls keine Konvergenz gefunden wurde
-
-print(f"Punkt nach {M_max_part_e} Schritten: x_{M_max_part_e} = {xM_result_e}") #änderung: Ausgabe des Endpunkts
-print("-------------------------\n")
-
-# --- Hinweis: Zur Selbstkontrolle (nicht Teil der abgegebenen Lösung, nur zur Überprüfung) ---
-# Die Ergebnisse x_k der ersten Iterations-Schritte k sind:
-# x_1 = [1.04138747, 1.08207086]
-# x_2 = [0.95876902, 0.91154631]
-# x_3 = [1.03965373, 1.0753438]
-# x_4 = [0.97646384, 0.94882795]
-# x_5 = [1.00373334, 1.00687187]
-# x_6 = [1.00001532, 1.00001537]
-# x_7 = [1.1, 1.1] # Dies scheint ein Tippfehler zu sein, x_7 sollte sehr nah am Optimum sein
-# Nach M = 5 Schritten unterschreitet die Genauigkeit das gegebene ϵ mit einer normierten Differenz von 7.82e-03.
-# --> Der Code sollte dies bestätigen, wenn M_max_part_e >= 5 und epsilon=0.01 ist. 7.82e-03 < 0.01 ist korrekt.
-
-#änderung: Import matplotlib for plotting. # Diesen Import am Anfang des Skripts platzieren, falls noch nicht da.
 import matplotlib.pyplot as plt
+import random
+import boostfactor # Dies importiert die Funktionen aus der boostfactor.py Datei
 
-# --- Teil f: Freiwillig - Darstellung ---
-#änderung: Code für Teil f (Plotting) hinzugefügt.
-print("\n--- Ergebnisse Teil f) ---")
-print("Erstelle Plot der Funktion und des Newton-Pfades...")
+# Setze Seeds für Reproduzierbarkeit
+SEED_VALUE = 42
+np.random.seed(SEED_VALUE)
+random.seed(SEED_VALUE)
 
-# Bereich für den Plot definieren
-# Basierend auf der Form der Funktion und dem Startpunkt/Optimum
-x_min, x_max = 0.8, 1.2 # Bereich um das erwartete Minimum [1,1]
-y_min, y_max = 0.8, 1.2
+# --- Lösung für Aufgabe 2a ---
+def objective_function(distances_vec_mm, frequencies_vec_ghz):
+    """
+    Args:
+        distances_vec_mm (np.ndarray): Ein numpy-Array der Scheibenabstände [mm].
+                                    Dies ist der Zustandsvektor, der optimiert wird.
+        frequencies_vec_ghz (np.ndarray): Ein numpy-Array der Frequenzen [GHz],
+                                      über die das Minimum berechnet werden soll.
 
-# Gitter für die Konturplot erstellen
-x_plot = np.linspace(x_min, x_max, 200) #änderung: Mehr Punkte für glattere Konturen
-y_plot = np.linspace(y_min, y_max, 200) #änderung: Mehr Punkte für glattere Konturen
-X, Y = np.meshgrid(x_plot, y_plot)
+    Returns:
+        float: Das Negative des Minimums des Boost-Faktors über die gegebenen
+               Frequenzen für die gegebenen Abstände. Ein kleinerer Wert
+               entspricht einer "besseren" Lösung im Sinne der Maximierung
+               des Minimums.
+    """
+    # Konvertiere Abstände von mm in Meter für die boostfactor Funktion
+    distances_m = np.asarray(distances_vec_mm) * 1e-3
+    # Konvertiere Frequenzen von GHz in Hz
+    frequencies_hz = np.asarray(frequencies_vec_ghz) * 1e9
 
-# Funktionswerte auf dem Gitter berechnen
-# Die lambdify Funktion f_numerical erwartet ein Tupel (X, Y) wenn sie mit numpy meshgrid verwendet wird
-Z = f_numerical((X, Y)) #änderung: Übergabe als Tupel
+    # Rufe die boostfactor Funktion aus dem importierten Modul auf
+    beta_squared_values = boostfactor.boostfactor(frequencies_hz, distances_m)
 
-plt.figure(figsize=(10, 8))
+    # Finde das Minimum des Boost-Faktors in diesem Frequenzbereich
+    min_beta_squared = np.min(beta_squared_values)
 
-# Konturplot der Funktion f(x, y)
-# Verwenden einer logarithmischen Skala für die Levels, da die Funktion steil ansteigt
-levels = np.logspace(np.log10(Z.min() + 1e-6), np.log10(Z.max()), 50) # Logarithmische Skala für Levels
-plt.contourf(X, Y, Z, levels=levels, cmap='viridis', alpha=0.8)
-plt.colorbar(label='f(x, y)')
-plt.contour(X, Y, Z, levels=levels, colors='black', linewidths=0.5, alpha=0.5) # Konturlinien zusätzlich zeichnen
+    # Gib das Negative des Minimums zurück (für Minimierungsalgorithmen)
+    return -min_beta_squared
 
-# Newton-Punkte aus der Historie extrahieren
-# Die Historie wurde in newton_verfahren (Teil e) gesammelt
-# x_history_e enthält die Punkte für die M_max_part_e Schritte
-x_coords = [p[0] for p in x_history_e]
-y_coords = [p[1] for p in x_history_e]
 
-# Newton-Pfad zeichnen
-plt.plot(x_coords, y_coords, marker='o', linestyle='-', color='red', markersize=5, label='Newton Path') #änderung: linestyle='-' für durchgezogene Linie
+# --- Lösung für Aufgabe 2b ---
+def find_neighbour(current_solution, step_size_r_mm):
+    """
+    Findet einen Nachbarzustand durch Hinzufügen eines skalierten Zufallsvektors.
+    Verwendet die space_uniform_rand Funktion aus der boostfactor.py Datei.
 
-# Start- und Endpunkt markieren
-plt.plot(x_coords[0], y_coords[0], 'go', markersize=8, label='Start $x_0$') # Grüner Kreis für Start
-plt.plot(x_coords[-1], y_coords[-1], 'bo', markersize=8, label=f'End $x_{M_max_part_e}$') # Blauer Kreis für Ende
+    Args:
+        current_solution (np.ndarray): Der aktuelle Zustandsvektor (Abstände in mm).
+        step_size_r_mm (float): Die maximale Schrittweite [mm] zur Skalierung des Zufallsvektors.
 
-# Optimum (von scipy.optimize) markieren
-plt.plot(x_optimized[0], x_optimized[1], '*', markersize=10, color='cyan', label='Optimum $x̃$ (SciPy)') # Stern für Optimum
+    Returns:
+        np.ndarray: Der neue Nachbarzustand (Abstände in mm).
+    """
+    n = len(current_solution)
+    # Erzeuge einen raumgleichverteilten, normierten Zufallsvektor
+    random_direction = boostfactor.space_uniform_rand(n)
 
-plt.title('Newton-Verfahren auf Rosenbrock-ähnlicher Funktion')
-plt.xlabel('$x_1$')
-plt.ylabel('$x_2$')
-plt.legend()
-plt.grid(True, linestyle='--', alpha=0.6)
-plt.xlim(x_min, x_max)
-plt.ylim(y_min, y_max)
-plt.gca().set_aspect('equal', adjustable='box') # Gleiches Seitenverhältnis für x und y
-plt.show()
+    # Erzeuge 'a' gleichverteilt zufällig zwischen 0 und step_size_r_mm, wie in der Aufgabenstellung gefordert
+    a = random.uniform(0, step_size_r_mm)
 
-print("-------------------------\n")
+    neighbour_solution = current_solution + a * random_direction
 
-# --- Ende Teil f ---
+    # Stelle sicher, dass die Abstände nicht negativ sind.
+    # Ein kleiner positiver Wert verhindert numerische Probleme und berücksichtigt physikalische Realität.
+    return np.maximum(0.001, neighbour_solution)
+
+def thermal_probability(delta_E, temperature):
+    """
+    Berechnet die thermische Wahrscheinlichkeit für die Akzeptanz eines schlechteren Zustands.
+
+    Args:
+        delta_E (float): Die Differenz der Objective-Funktion-Werte (Nachbar - Aktuell).
+                         Sollte positiv sein für schlechtere Zustände.
+        temperature (float): Die aktuelle Temperatur des Simulated Annealing.
+
+    Returns:
+        float: Die Akzeptanzwahrscheinlichkeit.
+    """
+    if temperature <= 1e-9: # Eine sehr kleine Zahl statt 0, um Division durch Null zu vermeiden
+        return 0.0 # Bei quasi-Temperatur 0 werden keine schlechteren Zustände akzeptiert
+    return np.exp(-delta_E / temperature)
+
+
+def simulated_annealing(objective_func, initial_solution, temperatures, step_size_r_mm_init, frequencies_for_obj):
+    """
+    Implementiert den Simulated Annealing Algorithmus.
+
+    Args:
+        objective_func (callable): Die zu minimierende Objective Function.
+                                   Erwartet (distances_vec_mm, frequencies_vec_ghz).
+        initial_solution (np.ndarray): Der Startzustand (Abstände in mm).
+        temperatures (list or np.ndarray): Eine abfallende Folge von Temperaturen.
+        step_size_r_mm_init (float or list/np.ndarray): Die Schrittweite(n) [mm]. Kann konstant
+                                                         oder eine Folge sein (wird pro Iteration genutzt).
+        frequencies_for_obj (np.ndarray): Die Frequenzen [GHz] zur Bewertung der Objective Function.
+
+    Returns:
+        tuple: (best_solution, best_objective_value, history)
+               best_solution (np.ndarray): Die beste gefundene Lösung (Abstände in mm).
+               best_objective_value (float): Der Wert der Objective Function für die beste Lösung.
+               history (dict): Verlauf der Optimierung.
+    """
+    # 1. Initialisierung
+    current_solution = np.copy(initial_solution)
+    best_solution = np.copy(initial_solution)
+
+    current_objective_value = objective_func(current_solution, frequencies_for_obj)
+    best_objective_value = current_objective_value
+
+    # Optional: Speichern des Verlaufs
+    history = {
+        'solutions': [np.copy(current_solution)],
+        'objective_values': [current_objective_value], # Aktueller Wert in jeder Iteration
+        'best_objective_values': [best_objective_value] # Bester Wert bis zu dieser Iteration
+    }
+
+    num_iterations = len(temperatures)
+
+    print("Starte Simulated Annealing...")
+    for t_idx in range(num_iterations):
+        current_temperature = temperatures[t_idx]
+
+        # Bestimme die aktuelle Schrittweite
+        current_step_size_r = step_size_r_mm_init if isinstance(step_size_r_mm_init, (int, float)) else step_size_r_mm_init[t_idx]
+
+        # 2. Zufällige Wahl eines Nachbarwertes
+        neighbour_solution = find_neighbour(current_solution, current_step_size_r)
+        neighbour_objective_value = objective_func(neighbour_solution, frequencies_for_obj)
+
+        # 3. Selektion (Akzeptanzkriterium)
+        delta_E = neighbour_objective_value - current_objective_value
+
+        if delta_E <= 0: # Verbesserung oder gleichwertig
+            accept = True
+        else: # Verschlechterung
+            acceptance_prob = thermal_probability(delta_E, current_temperature)
+            if random.random() < acceptance_prob:
+                accept = True
+            else:
+                accept = False
+
+        if accept:
+            current_solution = np.copy(neighbour_solution)
+            current_objective_value = neighbour_objective_value
+
+        # 4. Bisher beste Lösung setzen
+        # Wir suchen das MINIMUM der objective_function
+        if current_objective_value < best_objective_value:
+            best_solution = np.copy(current_solution)
+            best_objective_value = current_objective_value
+
+        # Optional: Verlauf speichern
+        history['solutions'].append(np.copy(current_solution))
+        history['objective_values'].append(current_objective_value)
+        history['best_objective_values'].append(best_objective_value)
+
+        # Optional: Fortschritt anzeigen
+        if (t_idx + 1) % 500 == 0 or t_idx == 0 or t_idx == num_iterations - 1:
+            print(f"Iteration {t_idx+1}/{num_iterations}, Temp: {current_temperature:.2e}, Current Obj: {current_objective_value:.4f}, Best Obj: {best_objective_value:.4f}")
+
+    print("Simulated Annealing beendet.")
+    return best_solution, best_objective_value, history
+
+
+if __name__ == '__main__':
+    # Setze Seeds zu Beginn des Hauptteils
+    np.random.seed(SEED_VALUE)
+    random.seed(SEED_VALUE)
+
+    # --- Aufgabe 2c: Baseline Konfiguration ---
+    print("\n--- Aufgabe 2c: Baseline Konfiguration ---")
+    num_disks_c = 20
+    distance_c_mm = 7.21
+    initial_distances_c_mm = np.full(num_disks_c, distance_c_mm)
+
+    f_min_plot_ghz = 21.9
+    f_max_plot_ghz = 22.2
+    num_freq_points_plot = 500 # Mehr Punkte für eine glatte Kurve
+
+    frequencies_plot_ghz = np.linspace(f_min_plot_ghz, f_max_plot_ghz, num_freq_points_plot)
+
+    print(f"Berechne Boost-Faktor für {num_disks_c} Scheibenabstände von {distance_c_mm} mm über Frequenzbereich {f_min_plot_ghz}-{f_max_plot_ghz} GHz...")
+    beta_squared_c = boostfactor.boostfactor(frequencies_plot_ghz * 1e9, initial_distances_c_mm * 1e-3)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(frequencies_plot_ghz, beta_squared_c, label=f'Initial (7.21mm feste Abstände)')
+    plt.xlabel('Frequenz f [GHz]')
+    plt.ylabel('Boost-Faktor $\\beta^2$')
+    plt.title('Boost-Faktor Kurve für Baseline Konfiguration')
+    plt.grid(True)
+    plt.axvline(f_min_plot_ghz, color='k', linestyle='--', linewidth=0.8)
+    plt.axvline(f_max_plot_ghz, color='k', linestyle='--', linewidth=0.8)
+
+    # Der relevante Optimierungsbereich für Aufgabe d ist 22.0 - 22.05 GHz
+    f_min_opt_ghz_d = 22.0
+    f_max_opt_ghz_d = 22.05
+
+    plt.axvline(f_min_opt_ghz_d, color='r', linestyle=':', linewidth=0.8, label='Optimierungsbereich (Aufgabe 2d)')
+    plt.axvline(f_max_opt_ghz_d, color='r', linestyle=':', linewidth=0.8)
+    plt.legend()
+    plt.show() # Zeige den Plot für Aufgabe 2c direkt an
+
+    # Berechne den Objective Wert für die Baseline im Optimierungsbereich der Aufgabe d
+    frequencies_opt_for_baseline_ghz = np.linspace(f_min_opt_ghz_d, f_max_opt_ghz_d, 10) # 10 Punkte wie in Aufgabe d
+    baseline_objective_value = objective_function(initial_distances_c_mm, frequencies_opt_for_baseline_ghz)
+    print(f"Objective Wert (Neg. Minimum in {f_min_opt_ghz_d:.2f}-{f_max_opt_ghz_d:.2f} GHz) für Baseline (Startwert): {baseline_objective_value:.4f}")
+
+    # --- Aufgabe 2d: Simulated Annealing Optimierung ---
+    print("\n--- Aufgabe 2d: Simulated Annealing Optimierung ---")
+
+    initial_distances_d_mm = np.copy(initial_distances_c_mm)
+    frequencies_for_optimization_ghz = np.linspace(f_min_opt_ghz_d, f_max_opt_ghz_d, 10)
+    print(f"Verwende {len(frequencies_for_optimization_ghz)} Frequenzpunkte ({frequencies_for_optimization_ghz[0]:.2f}-{frequencies_for_optimization_ghz[-1]:.2f} GHz) für Objective Function während der Optimierung.")
+
+    # Simulated Annealing Parameter
+    num_iterations = 10000 # Erhöhe die Iterationen, um bessere Ergebnisse zu erzielen
+
+    # Lauf 1: Parameter basierend auf dem Hinweis (lineare Temperaturabnahme)
+    print("\nLauf 1: Parameter aus Hinweis (Linear fallende Temperatur)")
+    sa_step_size_r_mm_1 = 0.1 # mm, wie im Hinweis empfohlen
+    sa_initial_temperature_1 = 100.0 # Startwert wie im Hinweis
+    sa_final_temperature_1 = 0.0 # Endwert wie im Hinweis
+    sa_temperatures_1 = np.linspace(sa_initial_temperature_1, sa_final_temperature_1, num_iterations)
+
+    best_distances_d1_mm, best_objective_value_d1, history1 = simulated_annealing(
+        objective_function,
+        initial_distances_d_mm,
+        sa_temperatures_1,
+        sa_step_size_r_mm_1,
+        frequencies_for_optimization_ghz
+    )
+
+    print(f"\nOptimierung Lauf 1 abgeschlossen.")
+    print(f"Bestes Objective Value gefunden: {best_objective_value_d1:.4f}")
+    print(f"Entspricht einem maximalen Minimum Boost-Faktor von: {-best_objective_value_d1:.4f}")
+
+    if -best_objective_value_d1 > 14000:
+        print("Ziel: Boost-Faktor > 14000 ERREICHT! :-)")
+    else:
+        print("Ziel: Boost-Faktor > 14000 NOCH NICHT ERREICHT.")
+
+    beta_squared_optimized_d1 = boostfactor.boostfactor(frequencies_plot_ghz * 1e9, best_distances_d1_mm * 1e-3)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(frequencies_plot_ghz, beta_squared_c, label='Initial (7.21mm feste Abstände)')
+    plt.plot(frequencies_plot_ghz, beta_squared_optimized_d1, label='Optimiert mit SA (Lauf 1)', color='red')
+    plt.xlabel('Frequenz f [GHz]')
+    plt.ylabel('Boost-Faktor $\\beta^2$')
+    plt.title('Boost-Faktor Kurven: Initial vs. SA Optimiert (Lauf 1)')
+    plt.grid(True)
+    plt.axvline(f_min_plot_ghz, color='k', linestyle='--', linewidth=0.8)
+    plt.axvline(f_max_plot_ghz, color='k', linestyle='--', linewidth=0.8)
+    plt.axvline(f_min_opt_ghz_d, color='r', linestyle=':', linewidth=0.8, label='Optimierungsbereich (Aufgabe 2d)')
+    plt.axvline(f_max_opt_ghz_d, color='r', linestyle=':', linewidth=0.8)
+    plt.legend()
+    plt.show()
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(history1['objective_values'], label='Current Objective Value')
+    plt.plot(history1['best_objective_values'], label='Best Objective Value Found', linestyle='--')
+    plt.xlabel('Iteration')
+    plt.ylabel('Objective Function Value (Neg. Min Boost-Faktor)')
+    plt.title('Simulated Annealing Verlauf (Lauf 1)')
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+
+    # Lauf 2: Experimentieren mit aggressiveren oder feiner abgestimmten Parametern (exponentiell)
+    print("\nLauf 2: Experimentelle Parameter (Exponentielle Temperatur, Feinabstimmung)")
+    sa_step_size_r_mm_2 = 0.08 # Eine etwas kleinere Schrittweite, aber nicht zu klein
+    sa_initial_temperature_2 = 200.0 # Höhere Starttemp für mehr Exploration am Anfang
+    sa_cooling_rate_2 = 0.9997 # Sehr langsames Abkühlen
+    sa_temperatures_2 = sa_initial_temperature_2 * (sa_cooling_rate_2**np.arange(num_iterations))
+    sa_temperatures_2[sa_temperatures_2 < 1e-9] = 1e-9 # Sicherstellen, dass Temp nicht Null wird
+
+    best_distances_d2_mm, best_objective_value_d2, history2 = simulated_annealing(
+        objective_function,
+        initial_distances_d_mm,
+        sa_temperatures_2,
+        sa_step_size_r_mm_2,
+        frequencies_for_optimization_ghz
+    )
+    print(f"\nOptimierung Lauf 2 abgeschlossen.")
+    print(f"Bestes Objective Value gefunden: {best_objective_value_d2:.4f}")
+    print(f"Entspricht einem maximalen Minimum Boost-Faktor von: {-best_objective_value_d2:.4f}")
+
+    if -best_objective_value_d2 > 14000:
+        print("Ziel: Boost-Faktor > 14000 ERREICHT! :-)")
+    else:
+        print("Ziel: Boost-Faktor > 14000 NOCH NICHT ERREICHT.")
+
+    beta_squared_optimized_d2 = boostfactor.boostfactor(frequencies_plot_ghz * 1e9, best_distances_d2_mm * 1e-3)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(frequencies_plot_ghz, beta_squared_c, label='Initial (7.21mm feste Abstände)')
+    plt.plot(frequencies_plot_ghz, beta_squared_optimized_d2, label='Optimiert mit SA (Lauf 2, exp. Temp)', color='green')
+    plt.xlabel('Frequenz f [GHz]')
+    plt.ylabel('Boost-Faktor $\\beta^2$')
+    plt.title('Boost-Faktor Kurven: Initial vs. SA Optimiert (Lauf 2)')
+    plt.grid(True)
+    plt.axvline(f_min_plot_ghz, color='k', linestyle='--', linewidth=0.8)
+    plt.axvline(f_max_plot_ghz, color='k', linestyle='--', linewidth=0.8)
+    plt.axvline(f_min_opt_ghz_d, color='r', linestyle=':', linewidth=0.8, label='Optimierungsbereich (Aufgabe 2d)')
+    plt.axvline(f_max_opt_ghz_d, color='r', linestyle=':', linewidth=0.8)
+    plt.legend()
+    plt.show()
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(history2['objective_values'], label='Current Objective Value (Lauf 2)')
+    plt.plot(history2['best_objective_values'], label='Best Objective Value Found (Lauf 2)', linestyle='--')
+    plt.xlabel('Iteration')
+    plt.ylabel('Objective Function Value (Neg. Min Boost-Faktor)')
+    plt.title('Simulated Annealing Verlauf (Lauf 2, exp. Temp)')
+    plt.grid(True)
+    plt.legend()
+    plt.show()
