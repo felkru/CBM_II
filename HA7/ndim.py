@@ -1,24 +1,6 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-### Vorlagendatei für die Übungen zur Computergestützten Physik ###
-
-# Bitte ergänzen Sie hier die Daten der Abgebenden. Ersetzen Sie nur
-# die Punkte ('...'), aber lassen Sie den Rest der Zeilen und ihre Reihenfolge
-# ansonsten unverändert, da Ihre Abgabe sonst nicht elektronisch verarbeitet
-# werden kann.
-#
-# 1)
-# Matrikelnummer: 458471
-# Name: Maximilian Kieser
-# Email: maximilian.l.kieser@gmail.com
-#
-# 2)
-# Matrikelnummer: 454505
-# Name: Louisa Steffens
-# Email: Louisa.sonne@web.de
-# #
-
 #%%
 
 # Häufig benötigte Module (auskommentieren, wenn notwendig):
@@ -30,11 +12,12 @@ from scipy.optimize import minimize
 
 # 1a)
 def funk():
-    x, y , z = sp.symbols('x,y,z')
-    variables =(x,y,z)
+    x, y = sp.symbols('x,y')
+    variables =(x,y)
     a = 1
     b = 100
-    f = z*(a-x)**2+b*(y-x**2)**2+0.1*sp.sin(3*sp.pi*x)*sp.sin(3*sp.pi*y)
+    f = (a-x)**2+b*(y-x**2)**2+0.1*sp.sin(3*sp.pi*x)*sp.sin(3*sp.pi*y)
+    #(a - x)**2 + b * (y - x**2)**2 + 0.1 * sp.sin(3 * sp.pi * x) * sp.sin(3 * sp.pi * y)
     grad_f = [sp.diff(f, var) for var in variables]
     Hesse_f = sp.hessian(f,variables)
 
@@ -54,7 +37,7 @@ def loesung_berechnen(f_lamb):
 # --------------------- 1c) ------------------
 
 def newton_schritt(x_k, grad_f, Hesse_f):
-    return x_k - np.linalg.solve(Hesse_f, grad_f)
+    return x_k - 0.83*np.linalg.solve(Hesse_f, grad_f)
 
 def newton_verfahren(x0, grad_f, Hesse_f, M):
     xk = np.array(x0, dtype=float)
@@ -87,10 +70,10 @@ def newton_verfahren_opt(x0, grad_f, Hesse_f,x_opt, eps=1e-2, max_item=20):
 # ----------------- 1d) --------------------
 
 if __name__ == "__main__":
-    x0 = [1.075, 1.0625, -9]
+    x0 = [0,10]
     f, grad_f, Hesse_f, f_lamb, grad_f_lamb, Hesse_f_lamb = funk()
     print("Newton-Verfahren (M = 2 Schritte):")
-    x_end = newton_verfahren(x0, grad_f_lamb, Hesse_f_lamb, M=2)
+    x_end = newton_verfahren(x0, grad_f_lamb, Hesse_f_lamb, M=5)
 
     # ----------------- 1e) --------------------
 

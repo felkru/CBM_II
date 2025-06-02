@@ -26,12 +26,11 @@ def define_symbolically():
 
     hess_f_sym = sp.hessian(f_specific, (x, y))
 
-    #Matrix([
-        #[sp.diff(f_specific, x, x), sp.diff(f_specific, x, y)],
-        #[sp.diff(f_specific, y, x), sp.diff(f_specific, y, y)]
-    #]))
 
     return f_specific, grad_f_sym, hess_f_sym, (x, y)
+
+#x0_initial = np.array([1.075, 1.0625])
+x0_initial = np.array([0, 10])
 
 # --- Teil a: Symbolische Berechnung ---
 f_sym, grad_f_sym, hess_f_sym, (x, y) = define_symbolically()
@@ -62,18 +61,19 @@ def grad_f_wrapper(params):
 def hess_f_wrapper(params):
     return np.array(hess_f_numerical(params))
 
-x0_initial = np.array([1.075, 1.0625])
+
 
 # --- Teil b: Vergleich mit scipy.optimize ---
 print("--- Ergebnisse Teil b) ---")
 result = minimize(f_wrapper, x0_initial, method='trust-ncg', jac=grad_f_wrapper, hess=hess_f_wrapper)
 x_optimized = result.x # = x~
 print(f"Ergebnis von scipy.optimize:")
-print(result) #ändrung: Das komplette Ergebnis ausgeben für mehr Details
+print(result)
 print(f"\nGefundener Extremalpunkt (näherungsweise): x̃ = {x_optimized}")
 print(f"Funktionswert an diesem Punkt: f(x̃) = {f_wrapper(x_optimized):.6f}")
 print("-------------------------\n")
 
+alpha = 0.83
 
 # --- Teil c: Implementierung Newton-Schritt ---
 def newton_schritt(xk: np.ndarray, grad_f_xk: np.ndarray, hess_f_xk: np.ndarray) -> np.ndarray:
@@ -83,7 +83,7 @@ def newton_schritt(xk: np.ndarray, grad_f_xk: np.ndarray, hess_f_xk: np.ndarray)
         print("Hesse-Matrix ist singulär. Newton-Schritt nicht möglich.")
         return xk
 
-    delta_x = hess_inv @ grad_f_xk
+    delta_x = alpha *hess_inv @ grad_f_xk
     xk_plus_1 = xk - delta_x
     return xk_plus_1
 
@@ -125,7 +125,7 @@ def newton_verfahren(x0: np.ndarray, f_func: callable, grad_f_func: callable, he
 
 # --- Ausführung für Teil d: M=2 Schritte ---
 print("\n--- Ausführung für Teil d: M=2 Newton-Schritte ---")
-M_part_d = 2
+M_part_d = 5
 
 xM_result_d, _, _ = newton_verfahren(x0_initial, f_wrapper, grad_f_wrapper, hess_f_wrapper, M_part_d) #änderung: Aufruf von newton_verfahren angepasst an neue Signatur.
 
