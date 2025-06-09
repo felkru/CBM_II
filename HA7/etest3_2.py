@@ -84,8 +84,8 @@ def newton_schritt(xk: np.ndarray, grad_f_xk: np.ndarray, hess_f_xk: np.ndarray)
         return xk
 
     delta_x = hess_inv @ grad_f_xk
-    # xk_plus_1 = xk - (0.85 * delta_x) # gedämpft mit alpha=0.85
-    xk_plus_1 = xk - delta_x
+    xk_plus_1 = xk - (0.85 * delta_x) # gedämpft mit alpha=0.85
+    # xk_plus_1 = xk - delta_x
     return xk_plus_1
 
 # --- Teil d und e: Implementierung und Ausführung Newton-Verfahren ---

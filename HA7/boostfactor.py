@@ -9,7 +9,7 @@ def cispi(x):
 
 # Berechnet den Boost-Faktor beta^2 für Frequenzen und Plattenabstände. Sie müssen diese
 # Funktion NICHT verstehen, sie müssen sie nur anwenden wie in der Vorlesung gezeigt.
-# frequencies und distances sollten numpy-Arrays sein.
+# frequencies und distances sollten numpy-Arrays sein. 
 # PS: Wir vergeben übrigens Bachelor-Arbeiten bei MADMAX
 def boostfactor(frequencies,distances):
     eps=24.0
@@ -31,14 +31,14 @@ def boostfactor(frequencies,distances):
                    [0.0,  A/2]],dtype=complex)
     S0 = np.array([[A0/2, 0.0],
                    [0.0, A0/2]],dtype=complex)
-
+    
     M  = np.copy(S)
     T  = np.copy(Gd)
 
     for j in range(len(frequencies)):
         pd1 = cispi(-2*frequencies[j]*nd*thickness/c0)
         pd2 = cispi(+2*frequencies[j]*nd*thickness/c0)
-
+        
         for i in reversed(range(len(distances))):
             T[:,0] *= pd1
             T[:,1] *= pd2
@@ -59,7 +59,7 @@ def boostfactor(frequencies,distances):
         boost[j] = M[0,0]+M[0,1]-(M[1,0]+M[1,1])*T[0,1]/T[1,1]
 
         np.copyto(M,S)
-        np.copyto(T,Gd)
+        np.copyto(T,Gd)  
 
     return np.abs(boost)**2
 
