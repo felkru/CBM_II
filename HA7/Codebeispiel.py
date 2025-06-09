@@ -9,7 +9,7 @@ Created on Mon May 12 15:28:57 2025
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Beispielhafte  Funktionen
+# Beispielhafte Funktionen
 def f(x):
     return (x - 3)**2 + 1  # Minimum bei x = 2
 
