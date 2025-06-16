@@ -330,14 +330,13 @@ if __name__ == '__main__':
     animation_total_time_d_g = 7.0
     animation_trail_length_d_g = 100
     output_video_filename_d_g = "454291_454343_U08_A1_mit_Energie.mp4" # Dateiname angepasst
-    make_animation_with_energy(filename=output_video_filename_d_g,
-                               initial_state_vector=INITIAL_STATE_FIG8,
-                               h_step=simulation_h_step_d_g,
-                               total_time_to_simulate=animation_total_time_d_g,
-                               trail_length=animation_trail_length_d_g,
-                               x_lims=[-1.5, 1.5], y_lims=[-1.2, 1.2],
-                               figure_title_prefix="Figure-8: ")
-    print(f"Animation '{output_video_filename_d_g}' für Teil 1d/1g erstellt.")
+    # make_animation_with_energy(filename=output_video_filename_d_g,
+    #                            initial_state_vector=INITIAL_STATE_FIG8,
+    #                            h_step=simulation_h_step_d_g,
+    #                            total_time_to_simulate=animation_total_time_d_g,
+    #                            trail_length=animation_trail_length_d_g,
+    #                            x_lims=[-1.5, 1.5], y_lims=[-1.2, 1.2],
+    #                            figure_title_prefix="Figure-8: ")
 
 
     # --- Teil f) Animation (Stabiles Dreieck) mit Energieplot (Aufgabe 1g hier auch angewendet) ---
@@ -348,14 +347,11 @@ if __name__ == '__main__':
     output_video_filename_f_g = "454291_454343_U08_A2_mit_Energie.mp4" # Dateiname angepasst
     triangle_anim_xlims = [-2.5, 2.5] # Etwas größere Limits für L=2 Dreieck
     triangle_anim_ylims = [-2.2, 2.2]
-    make_animation_with_energy(filename=output_video_filename_f_g,
-                               initial_state_vector=INITIAL_STATE_TRIANGLE,
-                               h_step=simulation_h_step_f_g,
-                               total_time_to_simulate=animation_total_time_f_g,
-                               trail_length=animation_trail_length_f_g,
-                               x_lims=triangle_anim_xlims,
-                               y_lims=triangle_anim_ylims,
-                               figure_title_prefix="Stabiles Dreieck: ")
-    print(f"Animation '{output_video_filename_f_g}' für Teil 1f/1g erstellt.")
-
-    print("Für die ABGABE des Codes: die beiden 'make_animation_with_energy'-Aufrufe oben wieder auskommentieren.")
+    # make_animation_with_energy(filename=output_video_filename_f_g,
+    #                            initial_state_vector=INITIAL_STATE_TRIANGLE,
+    #                            h_step=simulation_h_step_f_g,
+    #                            total_time_to_simulate=animation_total_time_f_g,
+    #                            trail_length=animation_trail_length_f_g,
+    #                            x_lims=triangle_anim_xlims,
+    #                            y_lims=triangle_anim_ylims,
+    #                            figure_title_prefix="Stabiles Dreieck: ")
