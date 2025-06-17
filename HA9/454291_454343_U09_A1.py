@@ -179,7 +179,7 @@ print(" 'x7', 'y7', 'phi7', 'x8', 'y8', 'phi8']")
 # Erhöhen Sie die Anzahl der Elemente N. Wie verhält sich die Kontur des Stabs unter
 # Last? Konvergiert sie?
 print("\n\n--- Aufgabe e) Konvergenzstudie ---")
-N_values_konvergenz = [4, 7, 10, 15, 20, 30, 40, 50, 70, 100]
+N_values_konvergenz = [1, 4, 7, 10, 15, 20, 30, 40, 50, 70, 100]
 results_last_node_x = []
 results_last_node_y = []
 results_last_node_phi = []
