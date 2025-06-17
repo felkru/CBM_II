@@ -26,11 +26,12 @@ def define_symbolically():
 
     hess_f_sym = sp.hessian(f_specific, (x, y))
 
+    #Matrix([
+        #[sp.diff(f_specific, x, x), sp.diff(f_specific, x, y)],
+        #[sp.diff(f_specific, y, x), sp.diff(f_specific, y, y)]
+    #]))
 
     return f_specific, grad_f_sym, hess_f_sym, (x, y)
-
-#x0_initial = np.array([1.075, 1.0625])
-x0_initial = np.array([0, 10])
 
 # --- Teil a: Symbolische Berechnung ---
 f_sym, grad_f_sym, hess_f_sym, (x, y) = define_symbolically()
@@ -68,12 +69,11 @@ print("--- Ergebnisse Teil b) ---")
 result = minimize(f_wrapper, x0_initial, method='trust-ncg', jac=grad_f_wrapper, hess=hess_f_wrapper)
 x_optimized = result.x # = x~
 print(f"Ergebnis von scipy.optimize:")
-print(result)
+print(result) #ändrung: Das komplette Ergebnis ausgeben für mehr Details
 print(f"\nGefundener Extremalpunkt (näherungsweise): x̃ = {x_optimized}")
 print(f"Funktionswert an diesem Punkt: f(x̃) = {f_wrapper(x_optimized):.6f}")
 print("-------------------------\n")
 
-alpha = 0.83
 
 # --- Teil c: Implementierung Newton-Schritt ---
 def newton_schritt(xk: np.ndarray, grad_f_xk: np.ndarray, hess_f_xk: np.ndarray) -> np.ndarray:
