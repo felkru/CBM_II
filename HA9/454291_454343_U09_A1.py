@@ -20,15 +20,15 @@ from scipy.constants import g as g_scipy
 # Ihre Geometrie zu kontrollieren.
 
 # --- Globale Parameter (werden in der Konvergenzschleife für N konstant gehalten, außer N selbst) ---
-L_gesamt_param = 0.70  # m (70 cm)
-phi_laterne_deg_param = 35  # degrees (Winkel, in dem Katja den Stab hält)
-m_load_param = 0.5  # kg (Masse am Ende)
+L_gesamt_param = 0.75  # m (70 cm)
+phi_laterne_deg_param = 37  # degrees (Winkel, in dem Katja den Stab hält)
+m_load_param = 0.48  # kg (Masse am Ende)
 d_mm_param = 10  # Durchmesser in mm
 E_Npmmsq_param = 1800  # N/mm^2
 
 # --- Berechnung für Aufgabe 1a-d ---
 print("--- Berechnung für Aufgabe 1a-d ---")
-N_aufg1 = 7  # N spezifisch für diesen Teil
+N_aufg1 = 10  # N spezifisch für diesen Teil
 N = N_aufg1 # Setze globales N für diesen Teil
 
 # Geometrie und Material für N=7
@@ -137,21 +137,28 @@ try:
     full_x_load_aufg1 = full_x_initial + delta_full
 
     print("\nDie Koordinaten bei Last sind gegeben durch (N=7):")
-    print(np.round(full_x_load_aufg1, 8))
-    solution_target = np.array([0.,0.,0.,0.09060484,0.04494409,-0.29547868,0.19685395,0.06754585,-0.5454991,0.31613995,0.071529,-0.75006127,0.44585546,0.06061725,-0.90916517,0.58339311,0.03853434,-1.02281082,0.72614552,0.00900399,-1.09099821,0.87150531,-0.02425009,-1.11372734])
-    print("\n--- Vergleich mit der Kontrolllösung (N=7) ---")
-    print("Target:\n", solution_target)
-    abs_diff = np.abs(full_x_load_aufg1 - solution_target)
-    rel_diff = np.zeros_like(abs_diff); non_zero_mask = np.abs(solution_target) > 1e-9
-    rel_diff[non_zero_mask] = abs_diff[non_zero_mask] / np.abs(solution_target[non_zero_mask])
-    if np.allclose(full_x_load_aufg1, solution_target, atol=1e-7, rtol=1e-5):
-        print("Die berechneten Werte stimmen sehr gut (innerhalb der Toleranz) mit der Selbstkontrolle überein.")
-    else:
-        print("WARNUNG: Die berechneten Werte weichen von der Selbstkontrolle ab!")
-        print("Berechnet:", np.round(full_x_load_aufg1,8)); print("Erwartet: ", solution_target)
-        max_abs_diff_idx = np.argmax(abs_diff); max_rel_diff_idx = np.argmax(rel_diff)
-        print(f"Maximale absolute Abweichung: {abs_diff[max_abs_diff_idx]:.2e} bei Index {max_abs_diff_idx}")
-        print(f"Maximale relative Abweichung: {rel_diff[max_rel_diff_idx]:.2e} bei Index {max_rel_diff_idx}")
+    print(np.round(full_x_load_aufg1, 3))
+
+    Ms = full_x_load_aufg1[2:-1:3]
+    sigmaBmax = (Ms*d_mm*10^(-3))/(2*I)
+    for i in sigmaBmax:
+        res = np.max(sigmaBmax)
+
+    print(f"----- RES: {res}")
+    # solution_target = np.array([0.,0.,0.,0.09060484,0.04494409,-0.29547868,0.19685395,0.06754585,-0.5454991,0.31613995,0.071529,-0.75006127,0.44585546,0.06061725,-0.90916517,0.58339311,0.03853434,-1.02281082,0.72614552,0.00900399,-1.09099821,0.87150531,-0.02425009,-1.11372734])
+    # print("\n--- Vergleich mit der Kontrolllösung (N=7) ---")
+    # print("Target:\n", solution_target)
+    # abs_diff = np.abs(full_x_load_aufg1 - solution_target)
+    # rel_diff = np.zeros_like(abs_diff); non_zero_mask = np.abs(solution_target) > 1e-9
+    # rel_diff[non_zero_mask] = abs_diff[non_zero_mask] / np.abs(solution_target[non_zero_mask])
+    # if np.allclose(full_x_load_aufg1, solution_target, atol=1e-7, rtol=1e-5):
+    #     print("Die berechneten Werte stimmen sehr gut (innerhalb der Toleranz) mit der Selbstkontrolle überein.")
+    # else:
+    #     print("WARNUNG: Die berechneten Werte weichen von der Selbstkontrolle ab!")
+    #     print("Berechnet:", np.round(full_x_load_aufg1,8)); print("Erwartet: ", solution_target)
+    #     max_abs_diff_idx = np.argmax(abs_diff); max_rel_diff_idx = np.argmax(rel_diff)
+    #     print(f"Maximale absolute Abweichung: {abs_diff[max_abs_diff_idx]:.2e} bei Index {max_abs_diff_idx}")
+    #     print(f"Maximale relative Abweichung: {rel_diff[max_rel_diff_idx]:.2e} bei Index {max_rel_diff_idx}")
 
 
 
