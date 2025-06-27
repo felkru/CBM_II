@@ -141,6 +141,8 @@ F_global[last_node_uy_dof] = F_gravity # Nur die y-Komponente am letzten Knoten
 F_reduced = np.delete(F_global, fixed_dofs, axis=0)
 
 print(f"\nKraft am letzten Knoten (Y-Richtung): {F_gravity:.4f} N")
+print("hier")
+print(F_reduced)
 print(f"Reduzierter Kraftvektor (Auszug, z.B. die ersten 5 Elemente): {F_reduced[:5]}")
 
 # Berechnen der reduzierten Koordinatenänderungen

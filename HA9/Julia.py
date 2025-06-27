@@ -3,21 +3,6 @@ from Library_simple_finite_elements import lokale_rotationsmatrix, lokale_steifh
 import matplotlib.pyplot as plt # Für den Plot der Konvergenz
 from scipy.constants import g as g_scipy
 
-# a) Übertragen Sie die Geometrie in Ihren Code:
-# • Definieren Sie dabei die Positionen xi, yi mit [xi, yi] = m der einzelnen Knoten
-# sowie die Winkel ϕi in Grad der einzelnen Stangen in Abhängigkeit der oben
-# beschriebenen Eingabegeometrie.
-# • Definieren Sie ein Mapping von Stangen-Id zu den linken und rechten Knoten-Ids,
-# mit dem Sie u.a. später die globale Steifheitsmatrix bestimmen. Dieses Mapping
-# soll vom Python-Typ dictionary sein. Der Aufbau sei wie folgt:
-# 1 stangen_zu_knoten = {
-# 2 StangenID : ( linke_KnotenID ,
-#                 rechte_KnotenID ),
-# 3 ...
-# 4 }
-# Hierbei seien alle IDs ganze Zahlen größer 0 so wie in Abbildung 1 dargestellt.
-# Verwenden Sie die Plot-Funktion in Library_simple_finite_elements.py um
-# Ihre Geometrie zu kontrollieren.
 
 # --- Globale Parameter (werden in der Konvergenzschleife für N konstant gehalten, außer N selbst) ---
 L_gesamt_param = 0.95  # m (70 cm)
@@ -73,21 +58,6 @@ plottePositionen(full_x_initial, stangen_zu_knoten, allphi=initial_element_angle
 lengths = check_Lengths(full_x_initial, stangen_zu_knoten)
 assert np.allclose(lengths, np.repeat(L_element, N)), "Lengths and coordinates aren't consistent"
 
-# b) Stellen Sie das Gleichungssystem auf:
-# • Verwenden Sie die beiden entsprechenden Funktionen in
-#                                           Library_simple_finite_elements.py,
-# um eine Liste der korrekt um ϕi rotierten lokalen Steifheitsmatrix zu erzeugen.
-# Hinweis: Die ϕi sind hier die Winkel, um die die jeweilige Stange von
-# ihrer horizontalen Lage rotiert wurden. Diese sind zu unterscheiden von
-# den Winkeln θi, welche an jedem Knoten angeben, um wie viel dieser im
-# Vergleich zur Stange rotiert wurde. Ohne Last sind also alle θi = 0.
-# • Erzeugen Sie aus dieser Liste und Ihrem Mapping die globale Steifheitsmatrix.
-# Achten Sie darauf, die Untermatrizen der lokalen Steifheitsmatrizen an die richti-
-#                                                                            gen Stellen der globalen Steifheitsmatrix zu setzen. Verwenden Sie hierfür Ihr
-# Mapping stangen_zu_knoten, sodass dieser Code-Teil eine beliebige Geometrie
-# korrekt in eine globale Steifheitsmatrix umsetzen kann.
-# Hinweis: Sie können zur Kontrolle gerne die Funktion plotMatrix verwen-
-#                                                                 den, um Ihre Matrizen anzuzeigen.
 
 local_stiffness_matrices_rotated = []
 K_unrotiert = lokale_steifheitsmatrix_unrotiert(L_element, A, E_Npm2, I)
@@ -116,18 +86,7 @@ last_node_idx_0_aufg1 = N
 y_dof_last_node_aufg1 = last_node_idx_0_aufg1 * 3 + 1
 F_global_vec_aufg1[y_dof_last_node_aufg1] = F_gravity
 F_reduced = np.delete(F_global_vec_aufg1, fixed_dofs, axis=0)
-# c) Lösen Sie nun das Gleichungssystem, um die Auswirkung des Gewichts auf den
-# Laternenstab zu simulieren:
-# • Erzeugen Sie die reduzierte, globale Steifheitsmatrix. Löschen Sie dazu die
-# Zeilen und Spalten Ihrer Steifheitsmatrix, die zu den Randbedingungen des
-# Knoten 1 gehören.
-# • Definieren Sie den reduzierten, globalen Kraftvektor. Dieser soll nur die nach
-# unten gerichtete Gewichtskraft der Masse m enthalten. Diese sei frei beweglich
-# am letzten Knoten aufgehangen.
-# • Berechnen Sie den reduzierten Vektor der Koordinatenänderungen.
-# • Erzeugen Sie daraus den vollständigen Vektor der Koordinatenänderungen.
-# • Berechnen Sie daraus den vollständigen Kraftvektor.
-# • Berechnen Sie den vollständigen Koordinatenvektor bei Last.
+
 try:
     delta_reduced = np.linalg.solve(K_reduced, F_reduced)
     delta_full = np.zeros(global_stiffness_matrix_size)
@@ -156,9 +115,6 @@ try:
         print(f"Maximale relative Abweichung: {rel_diff[max_rel_diff_idx]:.2e} bei Index {max_rel_diff_idx}")
 
 
-
-    # d) Plotten Sie den Laternenstab unter Last. Nutzen Sie dafür die gleiche Funktion wie
-    # beim ersten Plot.
     phi_elements_loaded_deg = np.zeros(N_aufg1)
     for i in range(N_aufg1):
         node_L_idx_0=i; node_R_idx_0=i+1
@@ -184,8 +140,7 @@ print(F_reduced)
 for i in range N:
     sigma.append()
 # --- Aufgabe e) Konvergenz ---
-# Erhöhen Sie die Anzahl der Elemente N. Wie verhält sich die Kontur des Stabs unter
-# Last? Konvergiert sie?
+
 print("\n\n--- Aufgabe e) Konvergenzstudie ---")
 N_values_konvergenz = [1, 4, 7, 10, 15, 20, 30, 40, 50, 70, 100]
 results_last_node_x = []
