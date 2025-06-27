@@ -3,6 +3,9 @@ experiments.ipynb
 # Ignore lecture slides
 materials/
 
+# Ignore MacOS specific files
+.DS_Store
+
 # Ignore LaTeX build files
 *.aux
 *.log
