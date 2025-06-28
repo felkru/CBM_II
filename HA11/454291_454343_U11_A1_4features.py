@@ -4,53 +4,49 @@ import matplotlib.pyplot as plt
 # =============================================================================
 # Konfiguration
 # =============================================================================
-N_FEATURES = 3  # Anzahl der zu verwendenden Merkmale (1, 2 oder 3)
+N_FEATURES = 4  # Anzahl der zu verwendenden Merkmale (1, 2, 3 oder 4)
 
 CONFIG = {
     'fruits': {
         'aepfel': {
             'data': np.array([
-                [0.61, 1.01, 170], [0.59, 1.06, 180], [0.57, 1.03, 160],
-                [0.64, 1.04, 190], [0.67, 1.08, 210], [0.62, 1.02, 165],
-                [0.62, 1.07, 175], [0.55, 1.01, 155], [0.59, 1.03, 170],
-                [0.66, 1.03, 185]
+                [0.61, 1.01, 170, 0.5], [0.59, 1.06, 180, 0.6], [0.57, 1.03, 160, 0.55],
+                [0.64, 1.04, 190, 0.65], [0.67, 1.08, 210, 0.7], [0.62, 1.02, 165, 0.58],
+                [0.62, 1.07, 175, 0.62], [0.55, 1.01, 155, 0.51], [0.59, 1.03, 170, 0.59],
+                [0.66, 1.03, 185, 0.68]
             ]),
             'color': 'r',
             'label': 'Äpfel'
         },
         'birnen': {
             'data': np.array([
-                [0.54, 1.11, 130], [0.56, 1.06, 145], [0.51, 1.13, 120],
-                [0.59, 1.13, 150], [0.59, 1.08, 135], [0.55, 1.12, 140],
-                [0.53, 1.08, 130], [0.49, 1.10, 125], [0.56, 1.11, 140],
-                [0.57, 1.07, 135]
+                [0.54, 1.11, 130, 0.8], [0.56, 1.06, 145, 0.85], [0.51, 1.13, 120, 0.78],
+                [0.59, 1.13, 150, 0.88], [0.59, 1.08, 135, 0.82], [0.55, 1.12, 140, 0.86],
+                [0.53, 1.08, 130, 0.81], [0.49, 1.10, 125, 0.75], [0.56, 1.11, 140, 0.84],
+                [0.57, 1.07, 135, 0.83]
             ]),
             'color': 'g',
             'label': 'Birnen'
         },
         'orangen': {
             'data': np.array([
-                [0.64, 0.98, 165], [0.66, 1.01, 180], [0.65, 0.97, 150],
-                [0.69, 1.02, 190], [0.70, 1.05, 200], [0.63, 0.96, 145],
-                [0.68, 1.03, 210], [0.69, 0.99, 155], [0.65, 0.95, 160],
-                [0.67, 1.00, 175]
+                [0.64, 0.98, 165, 0.3], [0.66, 1.01, 180, 0.35], [0.65, 0.97, 150, 0.28],
+                [0.69, 1.02, 190, 0.38], [0.70, 1.05, 200, 0.4], [0.63, 0.96, 145, 0.25],
+                [0.68, 1.03, 210, 0.42], [0.69, 0.99, 155, 0.32], [0.65, 0.95, 160, 0.29],
+                [0.67, 1.00, 175, 0.33]
             ]),
             'color': 'b',
             'label': 'Orangen'
         }
     },
     'testdata': np.array([
-        [0.60, 1.00, 175], [0.58, 1.05, 145],
-        [0.66, 1.02, 185], [0.52, 1.10, 130]
+        [0.60, 1.00, 175, 0.5], [0.58, 1.05, 145, 0.8],
+        [0.66, 1.02, 185, 0.4], [0.52, 1.10, 130, 0.7]
     ])
 }
 # =============================================================================
 # Datenaufbereitung
 # =============================================================================
-# a) Erstellen Sie aus den gegebenen Daten einen Datensatz X, der alle drei Klassen
-#    (Äpfel, Birnen, Orangen) enthält, erstellen Sie einen Label-Array y und visualisieren
-#    Sie diesen Datensatz in einem 3D-Plot. Verwenden Sie dabei die Merkmale Farbe,
-#    Längenverhältnis und Gewicht als Achsen.
 fruit_data = [fruit['data'][:, :N_FEATURES] for fruit in CONFIG['fruits'].values()]
 X = np.concatenate(fruit_data)
 y = np.array([i for i, fruit in enumerate(CONFIG['fruits'].values()) for _ in range(len(fruit['data']))])
@@ -98,15 +94,13 @@ elif N_FEATURES == 1:
     ax.set_title('1D-Darstellung der Obst-Daten')
     ax.legend()
     plt.show()
+else:
+    print(f"{N_FEATURES}D-Darstellung nicht möglich.")
 
 
 # =============================================================================
 # Lineare Diskriminantenanalyse (LDA)
 # =============================================================================
-# b) Führen Sie eine lineare Diskriminantenanalyse (LDA) durch, um die Daten voneinan-
-#    der zu separieren und stellen Sie die berechnete Projektion, die die Daten optimal
-#    voneinander trennt, in einem 2D-Plot dar. Stellen Sie sicher, dass Ihre berechneten
-#    Eigenvektoren normiert sind.
 mean_vectors = []
 for i in range(len(CONFIG['fruits'])):
     mean_vectors.append(np.mean(X[y == i], axis=0))
@@ -166,9 +160,6 @@ plt.legend()
 # =============================================================================
 # Klassifizierung
 # =============================================================================
-# c) Als Testdaten bekommen Sie nun neue Datenpunkte, die Sie klassifizieren sollen.
-#    Diese Testdaten beeinhalten auch wieder die Merkmale [Farbe F (in µm), Längenver-
-#    hältnis L (in mm), Gewicht G (in g)] und sind wie folgt gegeben:
 testdaten_lda = testdaten.dot(W)
 
 print("Testdaten in der LDA-Projektion:")
@@ -193,4 +184,3 @@ if testdaten_lda.shape[1] == 2:
 else:
     plt.scatter(testdaten_lda[:, 0], np.zeros_like(testdaten_lda[:, 0]), c=test_colors, marker='x', s=100, label='Testdaten')
 plt.show()
-
