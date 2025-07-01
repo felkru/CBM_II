@@ -137,6 +137,7 @@ eig_vecs=eig_vecs.real
 # Eigenvektoren nach Eigenwerten sortieren
 eig_pairs = [(np.abs(eig_vals[i]), eig_vecs[:, i]) for i in range(len(eig_vals))]
 eig_pairs = sorted(eig_pairs, key=lambda k: k[0], reverse=True)
+print(eig_pairs)
 
 # Transformationsmatrix W
 W = np.hstack([eig_pairs[i][1].reshape(N_FEATURES, 1) for i in range(min(N_FEATURES, 2))])
@@ -144,7 +145,7 @@ W = np.hstack([eig_pairs[i][1].reshape(N_FEATURES, 1) for i in range(min(N_FEATU
 # Normierung der Eigenvektoren
 for i in range(W.shape[1]):
     W[:, i] /= np.linalg.norm(W[:, i])
-
+print(W)
 # Daten transformieren
 X_lda = X.dot(W)
 
